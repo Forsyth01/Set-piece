@@ -1,4 +1,5 @@
 import Hero from "@/app/components/home/Hero";
+import ProductSwiper from "@/app/components/ProductSwiper";
 import ProductCard from "@/app/components/product/ProductCard";
 import { accessories } from "@/app/lib/mock-accessories";
 import { girlsCollections } from "@/app/lib/mock-girls-collections";
@@ -36,24 +37,13 @@ export default async function CollectionPage({ params }) {
   return (
     <>
       <Hero />
-      <main className="max-w-7xl mx-auto px-6 py-20">
-        {/* Heading */}
-        <div className="mb-12">
-          <span className="tracking-widest text-gray-400 text-[clamp(0.6rem,1.1vw,0.75rem)]">
-            SETPIECE
-          </span>
-          <h2 className="font-bold mt-2 text-[clamp(1.5rem,3vw,2.2rem)]">
-            {collection.title.toUpperCase()}
-          </h2>
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {collection.products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </main>
+      <ProductSwiper
+        eyebrow="SETPIECE"
+        title={collection.title.toUpperCase()}
+        products={collection.products}
+        ProductCard={ProductCard}
+        showViewAll={false}
+      />
     </>
   );
 }
