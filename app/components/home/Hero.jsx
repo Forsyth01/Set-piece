@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 
 const slides = [
   {
     id: 1,
     image: "/hero/Hero.png",
+   
     eyebrow: "PREMIUM SOCCER APPAREL • US EXCLUSIVE",
     title: "SetPiece",
     description:
@@ -18,9 +17,19 @@ const slides = [
   },
   {
     id: 2,
-     image: "/hero/Hero.png",
+    image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
     eyebrow: "LIMITED DROPS • AUTHENTIC DESIGNS",
     title: "Match Ready",
+    description:
+      "Built for matchday and beyond. Premium fabrics, modern fits, and timeless football culture.",
+    cta: "Explore",
+    href: "/collections/new-arrivals",
+  },
+  {
+    id: 3,
+  image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
+    eyebrow: "LIMITED DROPS • AUTHENTIC DESIGNS",
+    title: "Game On",
     description:
       "Built for matchday and beyond. Premium fabrics, modern fits, and timeless football culture.",
     cta: "Explore",
@@ -41,58 +50,46 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full h-[70vh] flex  overflow-hidden">
+    <section className="relative w-full h-[50vh] flex overflow-hidden">
       {/* Background Image */}
-      <AnimatePresence>
-        <motion.div
-          key={slides[current].id}
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-          className="absolute inset-0"
-        >
-          <img
-            src={slides[current].image}
-            alt={slides[current].title}
-            className="w-full h-full object-cover"
-          />
+      <div className="absolute inset-0">
+        <img
+          src={slides[current].image}
+          alt={slides[current].title}
+          className="w-full h-full object-cover transition-opacity duration-800"
+        />
 
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
-        </motion.div>
-      </AnimatePresence>
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+      </div>
 
-      {/* Text Content */}
-      <div className="relative z-10  max-w-7xl mx-auto px-6 flex items-center">
+      {/* Text Content - Left Aligned */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex items-center">
         <div className="max-w-xl text-white">
-          <p className="text-xs mb-4 inter lg:tracking-[4px] tracking-widest">
+          <p className="text-xs mb-4 lg:tracking-[4px] tracking-widest">
             {slides[current].eyebrow}
           </p>
 
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            {/* {slides[current].title} */}
-            <img src="/setpiece.png" alt="" className="h-14 lg:h-16" />
+            {slides[current].title}
           </h1>
 
           <p className="text-sm md:text-base tracking-tight text-gray-200 mb-8">
             {slides[current].description}
           </p>
 
-          <Link
+          <a
             href={slides[current].href}
             className="inline-block bg-white text-black px-8 py-3 rounded-md font-medium cursor-pointer hover:bg-gray-200 transition"
           >
             {slides[current].cta}
-          </Link>
+          </a>
         </div>
       </div>
 
       {/* Next Arrow */}
       <button
-        onClick={() =>
-          setCurrent((current + 1) % slides.length)
-        }
+        onClick={() => setCurrent((current + 1) % slides.length)}
         className="hidden lg:block absolute right-6 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full cursor-pointer z-20"
         aria-label="Next slide"
       >
@@ -106,9 +103,7 @@ export default function Hero() {
             key={index}
             onClick={() => setCurrent(index)}
             className={`w-3 h-3 rounded-full cursor-pointer ${
-              index === current
-                ? "bg-white"
-                : "bg-white/40"
+              index === current ? "bg-white" : "bg-white/40"
             }`}
           />
         ))}

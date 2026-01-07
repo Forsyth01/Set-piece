@@ -1,26 +1,132 @@
 import { useState, useRef, useEffect } from 'react';
+import { Heart } from 'lucide-react';
 
-// Mock Product Card Component (replace with your actual import)
+// Mock Product Card Component matching your design
 function ProductCard({ product }) {
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || 'M');
+  const [inWishlist, setInWishlist] = useState(false);
+
+  const handleAddToCart = () => {
+    console.log('Added to cart:', product.name, selectedSize);
+  };
+
+  const handleToggleWishlist = () => {
+    setInWishlist(!inWishlist);
+  };
+
   return (
-    <div className="bg-white border border-gray-200 p-4">
-      <div className="aspect-square bg-gray-100 mb-4 flex items-center justify-center">
-        <span className="text-gray-400 text-sm">{product.name}</span>
+    <div className="group">
+      {/* Image */}
+      <div className="relative bg-gray-100 p-4">
+        {product.isNew && (
+          <span className="absolute top-4 left-4 bg-red-700 text-white px-4 py-1 text-[clamp(0.55rem,1vw,0.7rem)]">
+            New
+          </span>
+        )}
+
+        <button
+          onClick={handleToggleWishlist}
+          className="absolute top-4 right-4 bg-white rounded-full p-1 cursor-pointer hover:bg-gray-100 transition"
+        >
+          <Heart
+            size={16}
+            className={inWishlist ? "fill-red-500 text-red-500" : ""}
+          />
+        </button>
+
+        <a href={`/products/${product.handle || product.id}`}>
+          <img
+            src={product.image || "/shirt2.png"}
+            alt={product.title || product.name}
+            className="w-full object-contain"
+          />
+        </a>
       </div>
-      <h3 className="font-semibold mb-2">{product.name}</h3>
-      <p className="text-gray-600">${product.price}</p>
+
+      {/* Sizes */}
+      <div className="flex gap-2 mt-3">
+        {(product.sizes || ['S', 'M', 'L', 'XL']).map((size) => (
+          <button
+            key={size}
+            onClick={() => setSelectedSize(size)}
+            className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] cursor-pointer transition ${
+              selectedSize === size
+                ? "bg-black text-white"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+          >
+            {size}
+          </button>
+        ))}
+      </div>
+
+      {/* Title */}
+      <h3 className="mt-3 tracking-normal font-semibold text-[clamp(0.85rem,1.4vw,1rem)]">
+        {product.title || product.name}
+      </h3>
+
+      {/* Price */}
+      <div className="flex gap-2 items-center mt-1">
+        <span className="font-medium text-[clamp(0.8rem,1.3vw,0.95rem)]">
+          ${product.price?.toFixed(2) || product.price}
+        </span>
+
+        {product.compareAtPrice && (
+          <span className="line-through text-gray-400 text-[clamp(0.75rem,1.2vw,0.9rem)]">
+            ${product.compareAtPrice.toFixed(2)}
+          </span>
+        )}
+      </div>
+
+      {/* Add to Cart */}
+      <button
+        onClick={handleAddToCart}
+        className="mt-4 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)]"
+      >
+        ADD TO CART
+      </button>
     </div>
   );
 }
 
-// Mock products data (replace with your actual import)
+// Mock products data
 const products = [
-  { id: 1, name: 'Product 1', price: 99 },
-  { id: 2, name: 'Product 2', price: 149 },
-  { id: 3, name: 'Product 3', price: 199 },
-  { id: 4, name: 'Product 4', price: 249 },
-  { id: 5, name: 'Product 5', price: 299 },
-  { id: 6, name: 'Product 6', price: 349 },
+  { 
+    id: 1, 
+    name: 'Premium Jersey', 
+    title: 'Premium Jersey',
+    price: 99.99, 
+    compareAtPrice: 129.99,
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    isNew: true,
+    handle: 'premium-jersey'
+  },
+  { 
+    id: 2, 
+    name: 'Classic Kit', 
+    title: 'Classic Kit',
+    price: 149.99,
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    handle: 'classic-kit'
+  },
+  { 
+    id: 3, 
+    name: 'Training Top', 
+    title: 'Training Top',
+    price: 79.99,
+    compareAtPrice: 99.99,
+    sizes: ['S', 'M', 'L', 'XL'],
+    isNew: true,
+    handle: 'training-top'
+  },
+  { 
+    id: 4, 
+    name: 'Match Shorts', 
+    title: 'Match Shorts',
+    price: 59.99,
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    handle: 'match-shorts'
+  },
 ];
 
 export default function TrendingCollections() {
@@ -101,7 +207,7 @@ export default function TrendingCollections() {
             ? 'flex overflow-x-auto gap-4 snap-x snap-mandatory scrollbar-hide -mx-6 px-6' 
             : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'
           }
-          ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}
+          ${isDragging ? 'cursor-grabbing' : 'cursor-grab lg:cursor-default'}
         `}
         style={{
           scrollbarWidth: 'none',
@@ -119,9 +225,6 @@ export default function TrendingCollections() {
           </div>
         ))}
       </div>
-
-      {/* Scroll Indicator (Mobile Only) */}
-      {/* Removed as per user request */}
 
       {/* View All */}
       <div className="mt-16 flex justify-between items-center">
