@@ -41,7 +41,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full  py-16 overflow-hidden">
+    <section className="relative w-full h-[70vh] flex  overflow-hidden">
       {/* Background Image */}
       <AnimatePresence>
         <motion.div
@@ -55,7 +55,7 @@ export default function Hero() {
           <img
             src={slides[current].image}
             alt={slides[current].title}
-            className="w-full object-cover"
+            className="w-full h-full object-cover"
           />
 
           {/* Dark gradient overlay */}
@@ -66,13 +66,13 @@ export default function Hero() {
       {/* Text Content */}
       <div className="relative z-10  max-w-7xl mx-auto px-6 flex items-center">
         <div className="max-w-xl text-white">
-          <p className="text-xs mb-4 inter tracking-[4px]">
+          <p className="text-xs mb-4 inter lg:tracking-[4px] tracking-widest">
             {slides[current].eyebrow}
           </p>
 
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             {/* {slides[current].title} */}
-            <img src="/setpiece.png" alt="" className="" />
+            <img src="/setpiece.png" alt="" className="h-14 lg:h-16" />
           </h1>
 
           <p className="text-sm md:text-base tracking-tight text-gray-200 mb-8">
@@ -93,7 +93,7 @@ export default function Hero() {
         onClick={() =>
           setCurrent((current + 1) % slides.length)
         }
-        className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full cursor-pointer z-20"
+        className="hidden lg:block absolute right-6 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full cursor-pointer z-20"
         aria-label="Next slide"
       >
         <ChevronRight size={24} />

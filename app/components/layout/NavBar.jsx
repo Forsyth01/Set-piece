@@ -36,7 +36,7 @@ export default function NavBar() {
 
   return (
     <div className="border-t">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6  flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 hidden md:flex items-center justify-between">
         {/* Categories Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button

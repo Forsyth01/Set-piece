@@ -9,7 +9,7 @@ export default function TrustBar() {
       <div className="max-w-7xl mx-auto px-6 py-16 relative">
         
         {/* Value Props */}
-        <div className="flex flex-col sm:flex-row gap-12">
+        <div className="flex flex-row gap-12">
           <Value title="100%" subtitle="AUTHENTIC" />
           <Value title="XL–3XL" subtitle="SIZE RANGE" />
           <Value title="US" subtitle="SHIPPING" />

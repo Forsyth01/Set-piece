@@ -5,7 +5,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/app/context/CartContext";
 import { useWishlist } from "@/app/context/WishlistContext";
-import { Search, Heart, ShoppingBag, User, X, Minus, Plus, Trash2 } from "lucide-react";
+import {
+  Search,
+  Heart,
+  ShoppingBag,
+  User,
+  X,
+  Minus,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 // Import products for suggestions
 import { accessories } from "@/app/lib/mock-accessories";
@@ -31,10 +40,18 @@ export default function TopBar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const router = useRouter();
-  
-  const { cart, removeFromCart, updateQuantity, getTotalItems, getTotalPrice, addToCart } = useCart();
-  const { wishlist, removeFromWishlist, getTotalWishlistItems, isInWishlist } = useWishlist();
-  
+
+  const {
+    cart,
+    removeFromCart,
+    updateQuantity,
+    getTotalItems,
+    getTotalPrice,
+    addToCart,
+  } = useCart();
+  const { wishlist, removeFromWishlist, getTotalWishlistItems, isInWishlist } =
+    useWishlist();
+
   const cartItemCount = getTotalItems();
   const wishlistItemCount = getTotalWishlistItems();
   const searchRef = useRef(null);
@@ -85,31 +102,39 @@ export default function TopBar() {
   // Close cart when clicking outside
   useEffect(() => {
     if (!isCartOpen) return;
-    
+
     const handleClickOutside = (e) => {
-      const cartElement = document.getElementById('sliding-cart');
-      if (cartElement && !cartElement.contains(e.target) && !e.target.closest('[data-cart-button]')) {
+      const cartElement = document.getElementById("sliding-cart");
+      if (
+        cartElement &&
+        !cartElement.contains(e.target) &&
+        !e.target.closest("[data-cart-button]")
+      ) {
         setIsCartOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isCartOpen]);
 
   // Close wishlist when clicking outside
   useEffect(() => {
     if (!isWishlistOpen) return;
-    
+
     const handleClickOutside = (e) => {
-      const wishlistElement = document.getElementById('sliding-wishlist');
-      if (wishlistElement && !wishlistElement.contains(e.target) && !e.target.closest('[data-wishlist-button]')) {
+      const wishlistElement = document.getElementById("sliding-wishlist");
+      if (
+        wishlistElement &&
+        !wishlistElement.contains(e.target) &&
+        !e.target.closest("[data-wishlist-button]")
+      ) {
         setIsWishlistOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isWishlistOpen]);
 
   const handleAddToCartFromWishlist = (product, size) => {
@@ -125,8 +150,12 @@ export default function TopBar() {
           className="flex items-center gap-2 font-bold text-xl cursor-pointer whitespace-nowrap"
         >
           <div className="flex items-center gap-2">
-            <img src="/logo-icon.png" alt="" className="" />
-            <img src="/logo.png" alt="SetPiece Logo" className="" />
+            <img src="/logo-icon.png" alt="" className="h-7 object-contain" />
+            <img
+              src="/logo.png"
+              alt="SetPiece Logo"
+              className="h-7 object-contain"
+            />
           </div>
         </Link>
 
@@ -238,8 +267,6 @@ export default function TopBar() {
         </div>
       </div>
 
-     
-
       {/* Sliding Cart */}
       <div
         id="sliding-cart"
@@ -267,7 +294,10 @@ export default function TopBar() {
           ) : (
             <div className="p-6 space-y-6">
               {cart.map((item) => (
-                <div key={`${item.id}-${item.size}`} className="flex gap-4 pb-6 border-b">
+                <div
+                  key={`${item.id}-${item.size}`}
+                  className="flex gap-4 pb-6 border-b"
+                >
                   <div className="w-24 h-24 bg-gray-100 rounded flex-shrink-0">
                     <img
                       src={item.image}
@@ -278,20 +308,38 @@ export default function TopBar() {
 
                   <div className="flex-1">
                     <h3 className="font-bold text-sm mb-1">{item.title}</h3>
-                    <p className="text-lg font-bold mb-2">${item.price.toFixed(2)}</p>
-                    <p className="text-sm text-gray-600 mb-3">Size: {item.size}</p>
+                    <p className="text-lg font-bold mb-2">
+                      ${item.price.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Size: {item.size}
+                    </p>
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 border rounded">
                         <button
-                          onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(
+                              item.id,
+                              item.size,
+                              item.quantity - 1
+                            )
+                          }
                           className="p-2 hover:bg-gray-100"
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                        <span className="w-8 text-center font-semibold">
+                          {item.quantity}
+                        </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(
+                              item.id,
+                              item.size,
+                              item.quantity + 1
+                            )
+                          }
                           className="p-2 hover:bg-gray-100"
                         >
                           <Plus size={14} />
@@ -311,10 +359,15 @@ export default function TopBar() {
               ))}
 
               <div className="pt-4">
-                <h3 className="font-bold text-center mb-4">YOU MIGHT ALSO LIKE</h3>
+                <h3 className="font-bold text-center mb-4">
+                  YOU MIGHT ALSO LIKE
+                </h3>
                 <div className="space-y-4">
                   {recommendations.map((product) => (
-                    <div key={product.id} className="flex gap-4 p-4 border rounded hover:shadow-md transition">
+                    <div
+                      key={product.id}
+                      className="flex gap-4 p-4 border rounded hover:shadow-md transition"
+                    >
                       <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0 relative">
                         <span className="absolute top-0 left-0 bg-red-600 text-white text-xs px-2 py-1 rounded-br">
                           New
@@ -326,11 +379,18 @@ export default function TopBar() {
                         />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-bold text-sm mb-1">{product.title}</h4>
-                        <p className="text-sm font-bold mb-2">${product.price.toFixed(2)}</p>
+                        <h4 className="font-bold text-sm mb-1">
+                          {product.title}
+                        </h4>
+                        <p className="text-sm font-bold mb-2">
+                          ${product.price.toFixed(2)}
+                        </p>
                         <div className="flex gap-2 text-xs mb-2">
                           {product.sizes?.map((size) => (
-                            <button key={size} className="px-2 py-1 border rounded hover:bg-gray-100">
+                            <button
+                              key={size}
+                              className="px-2 py-1 border rounded hover:bg-gray-100"
+                            >
                               {size}
                             </button>
                           ))}
@@ -374,11 +434,13 @@ export default function TopBar() {
       <div
         id="sliding-wishlist"
         className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
-          isWishlistOpen ? 'translate-x-0' : 'translate-x-full'
+          isWishlistOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-bold">My Wishlist ({wishlistItemCount})</h2>
+          <h2 className="text-xl font-bold">
+            My Wishlist ({wishlistItemCount})
+          </h2>
           <button
             onClick={() => setIsWishlistOpen(false)}
             className="p-2 hover:bg-gray-100 rounded-full transition"
@@ -392,12 +454,17 @@ export default function TopBar() {
             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
               <Heart size={64} className="text-gray-300 mb-4" />
               <p className="text-gray-500 text-lg">Your wishlist is empty</p>
-              <p className="text-gray-400 text-sm mt-2">Start adding your favorite items!</p>
+              <p className="text-gray-400 text-sm mt-2">
+                Start adding your favorite items!
+              </p>
             </div>
           ) : (
             <div className="p-6 space-y-4">
               {wishlist.map((item) => (
-                <div key={item.id} className="flex gap-4 p-4 border rounded hover:shadow-md transition">
+                <div
+                  key={item.id}
+                  className="flex gap-4 p-4 border rounded hover:shadow-md transition"
+                >
                   <div className="w-24 h-24 bg-gray-100 rounded flex-shrink-0">
                     <img
                       src={item.image}
@@ -422,9 +489,11 @@ export default function TopBar() {
                         <X size={18} />
                       </button>
                     </div>
-                    
+
                     <div className="flex gap-2 items-center mb-3">
-                      <span className="text-lg font-bold">${item.price.toFixed(2)}</span>
+                      <span className="text-lg font-bold">
+                        ${item.price.toFixed(2)}
+                      </span>
                       {item.compareAtPrice && (
                         <span className="text-sm line-through text-gray-400">
                           ${item.compareAtPrice.toFixed(2)}
@@ -436,7 +505,9 @@ export default function TopBar() {
                       {item.sizes?.map((size) => (
                         <button
                           key={size}
-                          onClick={() => handleAddToCartFromWishlist(item, size)}
+                          onClick={() =>
+                            handleAddToCartFromWishlist(item, size)
+                          }
                           className="px-3 py-1 text-xs border rounded hover:bg-black hover:text-white transition"
                         >
                           {size}
