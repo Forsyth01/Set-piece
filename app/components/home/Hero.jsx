@@ -8,7 +8,7 @@ import Link from "next/link";
 const slides = [
   {
     id: 1,
-    image: "/hero/hero.png",
+    image: "/hero/Hero.png",
     eyebrow: "PREMIUM SOCCER APPAREL • US EXCLUSIVE",
     title: "SetPiece",
     description:
@@ -18,7 +18,7 @@ const slides = [
   },
   {
     id: 2,
-     image: "/hero/hero.png",
+     image: "/hero/Hero.png",
     eyebrow: "LIMITED DROPS • AUTHENTIC DESIGNS",
     title: "Match Ready",
     description:
