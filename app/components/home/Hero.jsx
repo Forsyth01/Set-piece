@@ -66,15 +66,16 @@ export default function Hero() {
       {/* Text Content */}
       <div className="relative z-10  max-w-7xl mx-auto px-6 flex items-center">
         <div className="max-w-xl text-white">
-          <p className="text-xs tracking-widest mb-4">
+          <p className="text-xs mb-4 inter tracking-[4px]">
             {slides[current].eyebrow}
           </p>
 
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            {slides[current].title}
+            {/* {slides[current].title} */}
+            <img src="/setpiece.png" alt="" className="" />
           </h1>
 
-          <p className="text-sm md:text-base text-gray-200 mb-8">
+          <p className="text-sm md:text-base tracking-tight text-gray-200 mb-8">
             {slides[current].description}
           </p>
 

@@ -11,6 +11,7 @@ import { newArrivals } from "@/app/lib/mock-new-arrivals";
 import { soccerShorts } from "@/app/lib/mock-soccer-shorts";
 import { theVault } from "@/app/lib/mock-the-vault";
 import Hero from "@/app/components/home/Hero";
+import { useWishlist } from "@/app/context/WishlistContext"; // Import the Wishlist context
 
 const PRODUCTS = [
   ...accessories,
@@ -27,6 +28,7 @@ export default function ProductPage({ params }) {
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist(); // Using the Wishlist context
 
   // Mock color variants (you'll replace this with real data)
   const colorVariants = [
@@ -52,7 +54,12 @@ export default function ProductPage({ params }) {
       for (let i = 0; i < quantity; i++) {
         addToCart(product, selectedSize);
       }
-     
+    }
+  };
+
+  const handleToggleWishlist = () => {
+    if (product) {
+      toggleWishlist(product); // Toggle wishlist item
     }
   };
 
@@ -64,14 +71,17 @@ export default function ProductPage({ params }) {
     );
   }
 
+  const inWishlist = isInWishlist(product.id); // Check if the item is in the wishlist
+
   return (
     <main className="bg-white min-h-screen">
-        <Hero/>
+      <Hero />
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Left Side - Product Image */}
           <div className="bg-gray-50 rounded-lg p-8">
             <img
+              //   src={product.image || "/shirt2.png"}
               src="/shirt2.png"
               alt={product.title}
               className="w-full object-contain"
@@ -100,7 +110,10 @@ export default function ProductPage({ params }) {
             {/* Color Selection */}
             <div>
               <p className="text-sm font-medium mb-3">
-                Color: <span className="font-bold">{colorVariants[selectedColor].name}</span>
+                Color:{" "}
+                <span className="font-bold">
+                  {colorVariants[selectedColor].name}
+                </span>
               </p>
               <div className="flex gap-3">
                 {colorVariants.map((color, index) => (
@@ -114,7 +127,8 @@ export default function ProductPage({ params }) {
                     }`}
                   >
                     <img
-                     src="/shirt.png"
+                      //   src={color.image}
+                      src="/shirt2.png"
                       alt={color.name}
                       className="w-full h-full object-cover"
                     />
@@ -144,45 +158,55 @@ export default function ProductPage({ params }) {
                 ))}
               </div>
             </div>
-
-            {/* Quantity */}
-            <div>
-              <p className="text-sm font-medium mb-3 uppercase tracking-wide">
-                QTY
-              </p>
-              <div className="flex items-center gap-4">
-                <select
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  className="w-24 px-4 py-3 border border-gray-300 focus:outline-none focus:border-black"
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-
-                <button className="flex items-center gap-2 px-4 py-3 border border-gray-300 hover:border-black transition">
-                  <Heart size={20} />
-                  <span className="text-sm font-medium">ADD TO WISHLIST</span>
-                </button>
+            <div className="flex items-center gap-4">
+              {/* Quantity */}
+              <div>
+                <p className="text-sm font-medium  uppercase tracking-wide">
+                  QTY
+                </p>
+                <div className="flex items-center gap-4">
+                  <select
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    className="w-24 px-4 py-3 border border-gray-300 focus:outline-none focus:border-black"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
 
-            {/* Add to Cart Button */}
-            <button
-              onClick={handleAddToCart}
-              className="w-full bg-black text-white py-4 font-bold text-sm tracking-wider hover:bg-gray-800 transition uppercase"
-            >
-              ADD TO CART
-            </button>
+              {/* Add to Wishlist Button */}
+              <button
+                onClick={handleToggleWishlist}
+                className="flex items-center gap-2 px-4 mt-5 py-3 border border-gray-300 hover:border-black transition"
+              >
+                <Heart size={20} />
+                <span className="text-sm font-medium">
+                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                </span>
+              </button>
+              </div>
 
+              {/* Add to Cart Button */}
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-black text-white py-4 font-bold text-sm tracking-wider hover:bg-gray-800 transition uppercase"
+              >
+                ADD TO CART
+              </button>
             {/* Design & Aesthetic */}
             <div className="pt-6 border-t">
               <h3 className="font-bold text-lg mb-3">Design & Aesthetic</h3>
               <p className="text-gray-700 leading-relaxed">
-                This premium soccer jersey features a sleek, monochromatic black base accented with sharp white geometric line-work. The design creates a high-contrast, dynamic visual effect tailored for a professional "SetPiece" look. It includes a centered, tonal club crest and a minimalist sponsor logo for a clean, modern finish.
+                This premium soccer jersey features a sleek, monochromatic black
+                base accented with sharp white geometric line-work. The design
+                creates a high-contrast, dynamic visual effect tailored for a
+                professional "SetPiece" look. It includes a centered, tonal club
+                crest and a minimalist sponsor logo for a clean, modern finish.
               </p>
             </div>
 
@@ -193,25 +217,29 @@ export default function ProductPage({ params }) {
                 <li className="flex items-start gap-2">
                   <span className="text-black mt-1">•</span>
                   <span>
-                    <strong>Fabric:</strong> Lightweight, breathable performance mesh designed for elite-level play.
+                    <strong>Fabric:</strong> Lightweight, breathable performance
+                    mesh designed for elite-level play.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-black mt-1">•</span>
                   <span>
-                    <strong>Fit:</strong> Standard athletic silhouette with reinforced stitching at the collar and sleeves.
+                    <strong>Fit:</strong> Standard athletic silhouette with
+                    reinforced stitching at the collar and sleeves.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-black mt-1">•</span>
                   <span>
-                    <strong>Colors:</strong> Also available in alternate White and Royal Blue colorways.
+                    <strong>Colors:</strong> Also available in alternate White
+                    and Royal Blue colorways.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-black mt-1">•</span>
                   <span>
-                    <strong>Sizing:</strong> Offered in extended sizes including XL, XXL, and XXXL.
+                    <strong>Sizing:</strong> Offered in extended sizes including
+                    XL, XXL, and XXXL.
                   </span>
                 </li>
               </ul>

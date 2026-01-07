@@ -11,12 +11,14 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl">👕</span>
               <span
                 className="font-bold
-                text-[clamp(1.4rem,3vw,1.8rem)]"
+                "
               >
-                SetPiece
+                <div className="flex items-center gap-2">
+                <img src="/logo_icon_white.png" alt="" className="h-10" />
+                <img src="/logo_white.png" alt="" className="h-10" />
+                </div>
               </span>
             </div>
 

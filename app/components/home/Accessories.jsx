@@ -8,15 +8,15 @@ export default function Accessories() {
       {/* Heading */}
       <div className="mb-12">
         <span
-          className="tracking-widest text-gray-400
-          text-[clamp(0.6rem,1.1vw,0.75rem)]"
+          className="tracking-[6px] text-gray-400
+          text-[clamp(0.6rem,1.1vw,0.75rem)] inter"
         >
           SETPIECE
         </span>
 
         <h2
           className="font-bold mt-2
-          text-[clamp(1.5rem,3vw,2.2rem)]"
+          text-[clamp(1.5rem,3vw,2.2rem)] black"
         >
           ACCESSORIES
         </h2>

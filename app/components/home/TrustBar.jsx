@@ -48,14 +48,14 @@ function Value({ title, subtitle }) {
     <div className="flex flex-col">
       <span
         className="font-bold leading-none
-        text-[clamp(1.75rem,4vw,3rem)]"
+        text-[clamp(1.75rem,4vw,3rem)] black tracking-tight"
       >
         {title}
       </span>
 
       <span
         className="mt-2 tracking-widest text-gray-500
-        text-[clamp(0.6rem,1.2vw,0.75rem)]"
+        text-[clamp(0.6rem,1.2vw,0.75rem)] inter"
       >
         {subtitle}
       </span>

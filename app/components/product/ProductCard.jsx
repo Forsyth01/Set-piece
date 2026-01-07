@@ -26,7 +26,7 @@ export default function ProductCard({ product }) {
       {/* Image */}
       <div className="relative bg-gray-100 p-4">
         {product.isNew && (
-          <span className="absolute top-4 left-4 bg-red-700 text-white px-2 py-1 text-[clamp(0.55rem,1vw,0.7rem)]">
+          <span className="absolute top-4 left-4 bg-red-700 text-white px-4 py-1 text-[clamp(0.55rem,1vw,0.7rem)]">
             New
           </span>
         )}
@@ -68,7 +68,7 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Title */}
-      <h3 className="mt-3 font-semibold text-[clamp(0.85rem,1.4vw,1rem)]">
+      <h3 className="mt-3 black tracking-normal font-semibold text-[clamp(0.85rem,1.4vw,1rem)]">
         {product.title}
       </h3>
 
