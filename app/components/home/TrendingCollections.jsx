@@ -1,18 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 import { Heart } from 'lucide-react';
+import { useCart } from '@/app/context/CartContext';
+import { useWishlist } from '@/app/context/WishlistContext';
 
-// Mock Product Card Component matching your design
+// Product Card Component with actual Cart & Wishlist functionality
 function ProductCard({ product }) {
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || 'M');
-  const [inWishlist, setInWishlist] = useState(false);
 
   const handleAddToCart = () => {
-    console.log('Added to cart:', product.name, selectedSize);
+    addToCart(product, selectedSize);
   };
 
   const handleToggleWishlist = () => {
-    setInWishlist(!inWishlist);
+    toggleWishlist(product);
   };
+
+  const inWishlist = isInWishlist(product.id);
 
   return (
     <div className="group">
@@ -127,6 +132,23 @@ const products = [
     sizes: ['M', 'L', 'XL', 'XXL'],
     handle: 'match-shorts'
   },
+  { 
+    id: 5, 
+    name: 'Hoodie', 
+    title: 'Hoodie',
+    price: 89.99,
+    sizes: ['L', 'XL', 'XXL', 'XXXL'],
+    handle: 'hoodie'
+  },
+  { 
+    id: 6, 
+    name: 'Track Jacket', 
+    title: 'Track Jacket',
+    price: 119.99,
+    compareAtPrice: 149.99,
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    handle: 'track-jacket'
+  },
 ];
 
 export default function TrendingCollections() {
@@ -164,14 +186,14 @@ export default function TrendingCollections() {
     if (!isDragging || !isMobile) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
+    const walk = (x - startX) * 1.5; // Reduced multiplier for smoother movement
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleTouchMove = (e) => {
     if (!isDragging || !isMobile) return;
     const x = e.touches[0].pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
+    const walk = (x - startX) * 1.5; // Reduced multiplier for smoother movement
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -204,22 +226,24 @@ export default function TrendingCollections() {
         onTouchEnd={handleDragEnd}
         className={`
           ${isMobile 
-            ? 'flex overflow-x-auto gap-4 snap-x snap-mandatory scrollbar-hide -mx-6 px-6' 
+            ? 'flex overflow-x-auto gap-4 scrollbar-hide -mx-6 px-6' 
             : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'
           }
-          ${isDragging ? 'cursor-grabbing' : 'cursor-grab lg:cursor-default'}
+          ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab lg:cursor-default'}
         `}
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         {products.map((product) => (
           <div
             key={product.id}
             className={`
-              ${isMobile ? 'min-w-[75vw] sm:min-w-[45vw] snap-center' : ''}
+              ${isMobile ? 'min-w-[75vw] sm:min-w-[45vw]' : ''}
             `}
+            onDragStart={(e) => e.preventDefault()} // Prevent image drag
           >
             <ProductCard product={product} />
           </div>
