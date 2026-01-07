@@ -1,28 +1,57 @@
 import Hero from "@/app/components/home/Hero";
-import ProductSwiper from "@/app/components/ProductSwiper";
-import ProductCard from "@/app/components/product/ProductCard";
+import CollectionPageWithSidebar from "@/app/components/CollectionPageWithSidebar";
 import { accessories } from "@/app/lib/mock-accessories";
 import { girlsCollections } from "@/app/lib/mock-girls-collections";
 import { hoodiesJoggers } from "@/app/lib/mock-hoodies-joggers";
 import { newArrivals } from "@/app/lib/mock-new-arrivals";
 import { soccerShorts } from "@/app/lib/mock-soccer-shorts";
 import { theVault } from "@/app/lib/mock-the-vault";
+import Newsletter from "@/app/components/home/Newsletter";
 
 const COLLECTION_MAP = {
-  accessories: { title: "Accessories", products: accessories },
+  accessories: { 
+    title: "Accessories", 
+    products: accessories, 
+    handle: "accessories" 
+  },
   "girls-collections": {
     title: "Girls Collections",
     products: girlsCollections,
+    handle: "girls-collections"
   },
-  "hoodies-joggers": { title: "Hoodies & Joggers", products: hoodiesJoggers },
-  "new-arrivals": { title: "New Arrivals", products: newArrivals },
-  "soccer-shorts": { title: "Soccer Shorts", products: soccerShorts },
-  "the-vault": { title: "The Vault", products: theVault },
+  "hoodies-joggers": { 
+    title: "Hoodies & Joggers", 
+    products: hoodiesJoggers,
+    handle: "hoodies-joggers"
+  },
+  "new-arrivals": { 
+    title: "New Arrivals", 
+    products: newArrivals,
+    handle: "new-arrivals"
+  },
+  "soccer-shorts": { 
+    title: "Soccer Shorts", 
+    products: soccerShorts,
+    handle: "soccer-shorts"
+  },
+  "the-vault": { 
+    title: "The Vault", 
+    products: theVault,
+    handle: "the-vault"
+  },
 };
+
+const ALL_COLLECTIONS = [
+  { title: "New Arrivals", handle: "new-arrivals" },
+  { title: "Accessories", handle: "accessories" },
+  { title: "Girls Collections", handle: "girls-collections" },
+  { title: "Hoodies & Joggers", handle: "hoodies-joggers" },
+  { title: "Soccer Shorts", handle: "soccer-shorts" },
+  { title: "The Vault", handle: "the-vault" },
+];
 
 export default async function CollectionPage({ params }) {
   const { handle } = await params;
-
   const collection = COLLECTION_MAP[handle];
 
   if (!collection) {
@@ -36,14 +65,12 @@ export default async function CollectionPage({ params }) {
 
   return (
     <>
-      <Hero />
-      <ProductSwiper
-        eyebrow="SETPIECE"
-        title={collection.title.toUpperCase()}
-        products={collection.products}
-        ProductCard={ProductCard}
-        showViewAll={false}
+      {/* <Hero /> */}
+      <CollectionPageWithSidebar 
+        collection={collection} 
+        allCollections={ALL_COLLECTIONS}
       />
+      <Newsletter/>
     </>
   );
 }
