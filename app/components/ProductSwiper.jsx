@@ -61,7 +61,7 @@ export default function ProductSwiper({
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-20">
+    <section className="max-w-7xl mx-auto px-6 sm:py-20 py-10">
       <div className="mb-12">
         {eyebrow && (
           <span className="tracking-widest text-gray-400 text-[clamp(0.6rem,1.1vw,0.75rem)]">

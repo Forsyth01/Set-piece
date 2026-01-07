@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 export default function TrustBar() {
   return (
     <section className="w-full">
-      <div className="max-w-7xl mx-auto px-6 py-16 relative">
+      <div className="max-w-7xl mx-auto px-6 sm:py-16 py-10 relative">
         
         {/* Value Props */}
         <div className="flex flex-row gap-12">
