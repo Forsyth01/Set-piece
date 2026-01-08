@@ -24,7 +24,7 @@ export default function ProductCard({ product }) {
   return (
     <div className="group flex flex-col h-full">
       {/* Image */}
-      <div className="relative bg-gray-100 p-4 aspect-square">
+      <div className="relative bg-gra-100 p-4 aspect-square">
         {product.isNew && (
           <span className="absolute top-4 left-4 bg-red-700 text-white px-4 py-1 text-[clamp(0.55rem,1vw,0.7rem)]">
             New
@@ -52,14 +52,14 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Content section with flex-grow to push button to bottom */}
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-col flex-grow space-y-[2px]">
         {/* Sizes */}
         <div className="flex gap-2 mt-3">
           {product.sizes.map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
-              className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] cursor-pointer transition ${
+              className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] rounded-[4px] cursor-pointer transition ${
                 selectedSize === size
                   ? "bg-black text-white"
                   : "text-gray-500 hover:bg-gray-100"
@@ -91,7 +91,7 @@ export default function ProductCard({ product }) {
         {/* Add to Cart - pushed to bottom with mt-auto */}
         <button
           onClick={handleAddToCart}
-          className="mt-auto pt-4 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)]"
+          className="md:mt-auto md:pt-4 mt-1 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)] rounded-[6px]"
         >
           ADD TO CART
         </button>

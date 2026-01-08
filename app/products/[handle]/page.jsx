@@ -12,6 +12,7 @@ import { soccerShorts } from "@/app/lib/mock-soccer-shorts";
 import { theVault } from "@/app/lib/mock-the-vault";
 import Hero from "@/app/components/home/Hero";
 import { useWishlist } from "@/app/context/WishlistContext"; // Import the Wishlist context
+import { trendingCollections } from "@/app/lib/mock-trending-collections";
 
 const PRODUCTS = [
   ...accessories,
@@ -20,6 +21,7 @@ const PRODUCTS = [
   ...newArrivals,
   ...soccerShorts,
   ...theVault,
+  ...trendingCollections
 ];
 
 export default function ProductPage({ params }) {
@@ -81,8 +83,8 @@ export default function ProductPage({ params }) {
           {/* Left Side - Product Image */}
           <div className="bg-gray-50 rounded-lg p-8">
             <img
-              //   src={product.image || "/shirt2.png"}
-              src="/shirt2.png"
+                src={product.image || "/shirt2.png"}
+            //   src="/shirt2.png"
               alt={product.title}
               className="w-full object-contain"
             />
