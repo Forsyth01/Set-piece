@@ -310,7 +310,7 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
       {/* Mobile Menu Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 bg-black text-white p-3 rounded-full shadow-lg"
+        className="hidden fixed top-20 left-4 z-50 bg-black text-white p-3 rounded-full shadow-lg"
       >
         <Menu size={20} />
       </button>
@@ -324,7 +324,7 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
       {sidebarOpen && (
         <>
           <div 
-            className="hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setSidebarOpen(false)}
           />
           <aside className="lg:hidden fixed top-0 left-0 bottom-0 w-80 bg-gray-50 p-6 z-50 overflow-y-auto">
