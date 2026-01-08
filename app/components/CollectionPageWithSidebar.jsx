@@ -324,7 +324,7 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
       {sidebarOpen && (
         <>
           <div 
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="hidden fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setSidebarOpen(false)}
           />
           <aside className="lg:hidden fixed top-0 left-0 bottom-0 w-80 bg-gray-50 p-6 z-50 overflow-y-auto">
