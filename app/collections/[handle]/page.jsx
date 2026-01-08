@@ -1,12 +1,13 @@
 import Hero from "@/app/components/home/Hero";
 import CollectionPageWithSidebar from "@/app/components/CollectionPageWithSidebar";
 import { accessories } from "@/app/lib/mock-accessories";
-import { girlsCollections } from "@/app/lib/mock-girls-collections";
 import { hoodiesJoggers } from "@/app/lib/mock-hoodies-joggers";
 import { newArrivals } from "@/app/lib/mock-new-arrivals";
 import { soccerShorts } from "@/app/lib/mock-soccer-shorts";
 import { theVault } from "@/app/lib/mock-the-vault";
 import Newsletter from "@/app/components/home/Newsletter";
+import { girlsCollections } from "@/app/lib/mock-girls-collections";
+import { trendingCollections } from "@/app/lib/mock-trending-collections";
 
 const COLLECTION_MAP = {
   accessories: { 
@@ -39,6 +40,11 @@ const COLLECTION_MAP = {
     products: theVault,
     handle: "the-vault"
   },
+  "trendy-collections": { 
+    title: "Trendy Collections", 
+    products: trendingCollections,
+    handle: "trendy-collections"
+  },
 };
 
 const ALL_COLLECTIONS = [
@@ -48,6 +54,7 @@ const ALL_COLLECTIONS = [
   { title: "Hoodies & Joggers", handle: "hoodies-joggers" },
   { title: "Soccer Shorts", handle: "soccer-shorts" },
   { title: "The Vault", handle: "the-vault" },
+  { title: "Trendy Collections", handle: "trendy-collections" },
 ];
 
 export default async function CollectionPage({ params }) {
@@ -61,7 +68,7 @@ export default async function CollectionPage({ params }) {
         <p>Handle: {handle}</p>
       </main>
     );
-  }
+  } 
 
   return (
     <>

@@ -22,9 +22,9 @@ export default function ProductCard({ product }) {
   const inWishlist = isInWishlist(product.id);
 
   return (
-    <div className="group">
+    <div className="group flex flex-col h-full">
       {/* Image */}
-      <div className="relative bg-gray-100 p-4">
+      <div className="relative bg-gray-100 p-4 aspect-square">
         {product.isNew && (
           <span className="absolute top-4 left-4 bg-red-700 text-white px-4 py-1 text-[clamp(0.55rem,1vw,0.7rem)]">
             New
@@ -43,55 +43,59 @@ export default function ProductCard({ product }) {
 
         <Link href={`/products/${product.handle}`}>
           <img
-            src="/shirt2.png"
+            // src="/shirt2.png"
+            src={product.image}
             alt={product.title}
-            className="w-full object-contain"
+            className="w-full h-full object-contain"
           />
         </Link>
       </div>
 
-      {/* Sizes */}
-      <div className="flex gap-2 mt-3">
-        {product.sizes.map((size) => (
-          <button
-            key={size}
-            onClick={() => setSelectedSize(size)}
-            className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] cursor-pointer transition ${
-              selectedSize === size
-                ? "bg-black text-white"
-                : "text-gray-500 hover:bg-gray-100"
-            }`}
-          >
-            {size}
-          </button>
-        ))}
-      </div>
+      {/* Content section with flex-grow to push button to bottom */}
+      <div className="flex flex-col flex-grow">
+        {/* Sizes */}
+        <div className="flex gap-2 mt-3">
+          {product.sizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => setSelectedSize(size)}
+              className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] cursor-pointer transition ${
+                selectedSize === size
+                  ? "bg-black text-white"
+                  : "text-gray-500 hover:bg-gray-100"
+              }`}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
 
-      {/* Title */}
-      <h3 className="mt-3 black tracking-normal font-semibold text-[clamp(0.85rem,1.4vw,1rem)]">
-        {product.title}
-      </h3>
+        {/* Title */}
+        <h3 className="mt-3 black tracking-normal font-semibold text-[clamp(0.85rem,1.4vw,1rem)] line-clamp-2">
+          {product.title}
+        </h3>
 
-      {/* Price */}
-      <div className="flex gap-2 items-center mt-1">
-        <span className="font-medium text-[clamp(0.8rem,1.3vw,0.95rem)]">
-          ${product.price.toFixed(2)}
-        </span>
-
-        {product.compareAtPrice && (
-          <span className="line-through text-gray-400 text-[clamp(0.75rem,1.2vw,0.9rem)]">
-            ${product.compareAtPrice.toFixed(2)}
+        {/* Price */}
+        <div className="flex gap-2 items-center mt-1">
+          <span className="font-medium text-[clamp(0.8rem,1.3vw,0.95rem)]">
+            ${product.price.toFixed(2)}
           </span>
-        )}
-      </div>
 
-      {/* Add to Cart */}
-      <button
-        onClick={handleAddToCart}
-        className="mt-4 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)]"
-      >
-        ADD TO CART
-      </button>
+          {product.compareAtPrice && (
+            <span className="line-through text-gray-400 text-[clamp(0.75rem,1.2vw,0.9rem)]">
+              ${product.compareAtPrice.toFixed(2)}
+            </span>
+          )}
+        </div>
+
+        {/* Add to Cart - pushed to bottom with mt-auto */}
+        <button
+          onClick={handleAddToCart}
+          className="mt-auto pt-4 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)]"
+        >
+          ADD TO CART
+        </button>
+      </div>
     </div>
   );
 }
