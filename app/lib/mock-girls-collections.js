@@ -18,6 +18,6 @@ export const girlsCollections = Array.from({ length: 8 }).map((_, i) => ({
   price: 118.0,
   compareAtPrice: i % 3 === 0 ? 148.0 : null,
   isNew: i < 4,
-  sizes: ["XS", "S", "M", "L", "XL"],
+sizes: ["S", "M", "L", "XL", "XXL", "XXXL"]
 }));
 

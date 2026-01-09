@@ -28,5 +28,5 @@ export const accessories = Array.from({ length: 18 }).map((_, i) => ({
   price: 122.0,
   compareAtPrice: i % 2 === 0 ? 154.03 : null,
   isNew: i < 3,
-  sizes: ["XL", "XXL", "XXXL"],
+  sizes: ["S", "M", "L", "XL", "XXL", "XXXL"]
 }));

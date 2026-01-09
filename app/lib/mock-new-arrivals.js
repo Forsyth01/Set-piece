@@ -17,5 +17,5 @@ export const newArrivals = Array.from({ length: 8 }).map((_, i) => ({
   price: 122.0,
   compareAtPrice: null,
   isNew: true,
-  sizes: ["XL", "XXL", "XXXL"],
+  sizes: ["S", "M", "L", "XL", "XXL", "XXXL"]
 }));

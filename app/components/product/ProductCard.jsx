@@ -9,7 +9,11 @@ import { useWishlist } from "@/app/context/WishlistContext";
 export default function ProductCard({ product, index = 0 }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+
+  // ✅ SAFE SIZES HANDLING
+  const sizes = Array.isArray(product?.sizes) ? product.sizes : [];
+  const [selectedSize, setSelectedSize] = useState(sizes[0] ?? null);
+
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
 
@@ -27,18 +31,15 @@ export default function ProductCard({ product, index = 0 }) {
       }
     );
 
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
+    if (cardRef.current) observer.observe(cardRef.current);
 
     return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
-      }
+      if (cardRef.current) observer.unobserve(cardRef.current);
     };
   }, []);
 
   const handleAddToCart = () => {
+    if (!selectedSize && sizes.length > 0) return;
     addToCart(product, selectedSize);
   };
 
@@ -84,30 +85,32 @@ export default function ProductCard({ product, index = 0 }) {
         </Link>
       </div>
 
-      {/* Content section with flex-grow to push button to bottom */}
+      {/* Content */}
       <div className="flex flex-col flex-grow space-y-[2px]">
         {/* Sizes */}
-        <div className="flex gap-2 mt-3">
-          {product.sizes.map((size, index) => (
-            <button
-              key={size}
-              onClick={() => setSelectedSize(size)}
-              className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] rounded-[4px] cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                selectedSize === size
-                  ? "bg-black text-white border-black"
-                  : "text-gray-500 hover:bg-gray-100 hover:border-gray-400"
-              }`}
-              style={{
-                transitionDelay: isVisible ? `${index * 50}ms` : "0ms",
-              }}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
+        {sizes.length > 0 && (
+          <div className="flex gap-2 mt-3 flex-wrap">
+            {sizes.map((size, i) => (
+              <button
+                key={size}
+                onClick={() => setSelectedSize(size)}
+                className={`border px-2 py-0.5 text-[clamp(0.55rem,1vw,0.7rem)] rounded-[4px] cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                  selectedSize === size
+                    ? "bg-black text-white border-black"
+                    : "text-gray-500 hover:bg-gray-100 hover:border-gray-400"
+                }`}
+                style={{
+                  transitionDelay: isVisible ? `${i * 50}ms` : "0ms",
+                }}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Title */}
-        <h3 className="mt-3 black tracking-normal font-semibold text-[clamp(0.85rem,1.4vw,1rem)] line-clamp-2 transition-colors duration-300 group-hover:text-gray-700">
+        <h3 className="mt-3 tracking-normal font-semibold text-[clamp(0.85rem,1.4vw,1rem)] line-clamp-2 transition-colors duration-300 group-hover:text-gray-700">
           {product.title}
         </h3>
 
@@ -124,12 +127,17 @@ export default function ProductCard({ product, index = 0 }) {
           )}
         </div>
 
-        {/* Add to Cart - pushed to bottom with mt-auto */}
+        {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
-          className="md:mt-auto md:pt-4 mt-1 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition-all duration-300 text-[clamp(0.75rem,1.2vw,0.9rem)] rounded-[6px] font-bold transform hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg"
+          disabled={sizes.length > 0 && !selectedSize}
+          className={`md:mt-auto md:pt-4 mt-1 w-full cursor-pointer py-3 rounded-[6px] font-bold text-[clamp(0.75rem,1.2vw,0.9rem)] transition-all duration-300 transform ${
+            sizes.length > 0 && !selectedSize
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-black text-white hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg"
+          }`}
         >
-          <p className="">ADD TO CART</p>
+          ADD TO CART
         </button>
       </div>
     </div>
