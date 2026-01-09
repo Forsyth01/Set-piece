@@ -8,7 +8,7 @@ const slides = [
     id: 1,
     image: "/hero/Hero.png",
     eyebrow: "PREMIUM SOCCER APPAREL • US EXCLUSIVE",
-    title: "SetPiece",
+    title: "SetPieces",
     description:
       "Elite kits for the modern game. Jerseys, shorts, hoodies, and accessories. Available in sizes that actually fit—XL to XXXL.",
     cta: "Shop Now",
