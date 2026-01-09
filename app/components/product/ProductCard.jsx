@@ -91,9 +91,9 @@ export default function ProductCard({ product }) {
         {/* Add to Cart - pushed to bottom with mt-auto */}
         <button
           onClick={handleAddToCart}
-          className="md:mt-auto md:pt-4 mt-1 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)] rounded-[6px]"
+          className="md:mt-auto md:pt-4 mt-1 w-full bg-black text-white py-3 cursor-pointer hover:bg-gray-800 transition text-[clamp(0.75rem,1.2vw,0.9rem)] rounded-[6px] font-bold"
         >
-          ADD TO CART
+          <p className="">ADD TO CART</p>
         </button>
       </div>
     </div>

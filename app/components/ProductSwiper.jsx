@@ -50,7 +50,7 @@ export default function ProductSwiper({
 
           <Link
             href={viewAllHref}
-            className="border px-6 py-3 text-sm hover:bg-black hover:text-white transition"
+            className="border font-bold rounded-sm px-6 py-3 text-sm hover:bg-black hover:text-white transition"
           >
             VIEW ALL
           </Link>

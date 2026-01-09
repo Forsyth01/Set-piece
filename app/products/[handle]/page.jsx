@@ -13,6 +13,7 @@ import { theVault } from "@/app/lib/mock-the-vault";
 import Hero from "@/app/components/home/Hero";
 import { useWishlist } from "@/app/context/WishlistContext"; // Import the Wishlist context
 import { trendingCollections } from "@/app/lib/mock-trending-collections";
+import RecommendedSection from "@/app/components/RecommendedSection";
 
 const PRODUCTS = [
   ...accessories,
@@ -249,6 +250,7 @@ export default function ProductPage({ params }) {
           </div>
         </div>
       </div>
+          <RecommendedSection />
     </main>
   );
 }

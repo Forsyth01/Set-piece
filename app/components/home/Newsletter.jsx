@@ -55,14 +55,14 @@ export default function Newsletter() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border px-4 py-3 outline-none
               focus:ring-1 focus:ring-black
-              text-[clamp(0.8rem,1.3vw,0.95rem)]"
+              text-[clamp(0.8rem,1.3vw,0.95rem)] rounded-sm"
           />
 
           <button
             type="submit"
             className="border px-8 py-3 cursor-pointer
-              hover:bg-black hover:text-white transition
-              text-[clamp(0.75rem,1.2vw,0.9rem)]"
+              hover:bg-black bg-[#1E1E1E] text-white transition
+              text-[clamp(0.75rem,1.2vw,0.9rem)] rounded-sm"
           >
             Subscribe
           </button>
