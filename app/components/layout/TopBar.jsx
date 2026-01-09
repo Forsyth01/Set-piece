@@ -40,6 +40,8 @@ export default function TopBar() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [showClearCartModal, setShowClearCartModal] = useState(false);
+  const [showClearWishlistModal, setShowClearWishlistModal] = useState(false);
   const router = useRouter();
 
   const {
@@ -49,8 +51,9 @@ export default function TopBar() {
     getTotalItems,
     getTotalPrice,
     addToCart,
+    clearCart,
   } = useCart();
-  const { wishlist, removeFromWishlist, getTotalWishlistItems } = useWishlist();
+  const { wishlist, removeFromWishlist, getTotalWishlistItems, clearWishlist } = useWishlist();
 
   const cartItemCount = getTotalItems();
   const wishlistItemCount = getTotalWishlistItems();
@@ -98,6 +101,16 @@ export default function TopBar() {
 
   const handleAddToCartFromWishlist = (product, size) => {
     addToCart(product, size);
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    setShowClearCartModal(false);
+  };
+
+  const handleClearWishlist = () => {
+    clearWishlist();
+    setShowClearWishlistModal(false);
   };
 
   return (
@@ -283,19 +296,117 @@ export default function TopBar() {
         </div>
       </motion.div>
 
-      {/* Backdrop for Cart/Wishlist */}
+      {/* Backdrop for Cart/Wishlist/Modals */}
       <AnimatePresence>
-        {(isCartOpen || isWishlistOpen) && (
+        {(isCartOpen || isWishlistOpen || showClearCartModal || showClearWishlistModal) && (
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="fixed inset-0  bg-opacity-50 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => {
               setIsCartOpen(false);
               setIsWishlistOpen(false);
+              setShowClearCartModal(false);
+              setShowClearWishlistModal(false);
             }}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Clear Cart Confirmation Modal */}
+      <AnimatePresence>
+        {showClearCartModal && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <Trash2 className="text-red-600" size={24} />
+                </div>
+                <h3 className="text-xl font-bold">Clear Cart?</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to remove all items from your cart? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <motion.button
+                  onClick={() => setShowClearCartModal(false)}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  onClick={handleClearCart}
+                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Clear Cart
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Clear Wishlist Confirmation Modal */}
+      <AnimatePresence>
+        {showClearWishlistModal && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <Trash2 className="text-red-600" size={24} />
+                </div>
+                <h3 className="text-xl font-bold">Clear Wishlist?</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to remove all items from your wishlist? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <motion.button
+                  onClick={() => setShowClearWishlistModal(false)}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  onClick={handleClearWishlist}
+                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Clear Wishlist
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -320,14 +431,27 @@ export default function TopBar() {
               >
                 Shopping Cart ({cartItemCount})
               </motion.h2>
-              <motion.button
-                onClick={() => setIsCartOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X size={24} />
-              </motion.button>
+              <div className="flex items-center gap-2">
+                {cart.length > 0 && (
+                  <motion.button
+                    onClick={() => setShowClearCartModal(true)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-full transition"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    title="Clear cart"
+                  >
+                    <Trash2 size={20} />
+                  </motion.button>
+                )}
+                <motion.button
+                  onClick={() => setIsCartOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X size={24} />
+                </motion.button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto">
@@ -533,14 +657,27 @@ export default function TopBar() {
               >
                 My Wishlist ({wishlistItemCount})
               </motion.h2>
-              <motion.button
-                onClick={() => setIsWishlistOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X size={24} />
-              </motion.button>
+              <div className="flex items-center gap-2">
+                {wishlist.length > 0 && (
+                  <motion.button
+                    onClick={() => setShowClearWishlistModal(true)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-full transition"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    title="Clear wishlist"
+                  >
+                    <Trash2 size={20} />
+                  </motion.button>
+                )}
+                <motion.button
+                  onClick={() => setIsWishlistOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X size={24} />
+                </motion.button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto">
