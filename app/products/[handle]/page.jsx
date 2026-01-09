@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
-import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { Heart } from "lucide-react";
+import { motion } from "framer-motion";
 import { accessories } from "@/app/lib/mock-accessories";
 import { girlsCollections } from "@/app/lib/mock-girls-collections";
 import { hoodiesJoggers } from "@/app/lib/mock-hoodies-joggers";
@@ -11,7 +11,7 @@ import { newArrivals } from "@/app/lib/mock-new-arrivals";
 import { soccerShorts } from "@/app/lib/mock-soccer-shorts";
 import { theVault } from "@/app/lib/mock-the-vault";
 import Hero from "@/app/components/home/Hero";
-import { useWishlist } from "@/app/context/WishlistContext"; // Import the Wishlist context
+import { useWishlist } from "@/app/context/WishlistContext";
 import { trendingCollections } from "@/app/lib/mock-trending-collections";
 import RecommendedSection from "@/app/components/RecommendedSection";
 
@@ -31,9 +31,8 @@ export default function ProductPage({ params }) {
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist(); // Using the Wishlist context
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
-  // Mock color variants (you'll replace this with real data)
   const colorVariants = [
     { name: "WHITE", image: "/products/shirt-white.jpg" },
     { name: "BLUE", image: "/products/shirt-blue.jpg" },
@@ -62,7 +61,7 @@ export default function ProductPage({ params }) {
 
   const handleToggleWishlist = () => {
     if (product) {
-      toggleWishlist(product); // Toggle wishlist item
+      toggleWishlist(product);
     }
   };
 
@@ -74,32 +73,83 @@ export default function ProductPage({ params }) {
     );
   }
 
-  const inWishlist = isInWishlist(product.id); // Check if the item is in the wishlist
+  const inWishlist = isInWishlist(product.id);
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
 
   return (
     <main className="bg-white min-h-screen">
       <Hero />
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <div className="max-w-7xl mx-auto px-6 py-12 md:my-20">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-16"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
           {/* Left Side - Product Image */}
-          <div className="bg-gray-50 rounded-lg p-8">
-            <img
-                src={product.image || "/shirt2.png"}
-            //   src="/shirt2.png"
+          <motion.div
+            className="bg-gray-50 rounded-lg p-8 overflow-hidden"
+            variants={imageVariants}
+          >
+            <motion.img
+              src={product.image || "/shirt2.png"}
               alt={product.title}
               className="w-full object-contain"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.4 }}
             />
-          </div>
+          </motion.div>
 
           {/* Right Side - Product Details */}
-          <div className="space-y-6">
+          <motion.div className="space-y-6" variants={containerVariants}>
             {/* Title */}
-            <h1 className="text-3xl font-bold uppercase tracking-tight">
+            <motion.h1
+              className="text-3xl font-bold uppercase tracking-tight"
+              variants={itemVariants}
+            >
               {product.title}
-            </h1>
+            </motion.h1>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3">
+            <motion.div
+              className="flex items-baseline gap-3"
+              variants={itemVariants}
+            >
               <span className="text-3xl font-light text-gray-600">
                 ${product.price.toFixed(2)}
               </span>
@@ -108,10 +158,10 @@ export default function ProductPage({ params }) {
                   ${product.compareAtPrice.toFixed(2)}
                 </span>
               )}
-            </div>
+            </motion.div>
 
             {/* Color Selection */}
-            <div>
+            <motion.div variants={itemVariants}>
               <p className="text-sm font-medium mb-3">
                 Color:{" "}
                 <span className="font-bold">
@@ -120,7 +170,7 @@ export default function ProductPage({ params }) {
               </p>
               <div className="flex gap-3">
                 {colorVariants.map((color, index) => (
-                  <button
+                  <motion.button
                     key={index}
                     onClick={() => setSelectedColor(index)}
                     className={`w-24 h-24 border-2 rounded-lg overflow-hidden transition ${
@@ -128,26 +178,27 @@ export default function ProductPage({ params }) {
                         ? "border-black shadow-md"
                         : "border-gray-200 hover:border-gray-400"
                     }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <img
-                      //   src={color.image}
                       src="/shirt2.png"
                       alt={color.name}
                       className="w-full h-full object-cover"
                     />
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Size Selection */}
-            <div>
+            <motion.div variants={itemVariants}>
               <p className="text-sm font-medium mb-3 uppercase tracking-wide">
                 Select Size
               </p>
               <div className="flex gap-2">
-                {product.sizes.map((size) => (
-                  <button
+                {product.sizes.map((size, index) => (
+                  <motion.button
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={`px-6 py-3 border transition font-medium ${
@@ -155,54 +206,84 @@ export default function ProductPage({ params }) {
                         ? "bg-black text-white border-black"
                         : "bg-white text-black border-gray-300 hover:border-black"
                     }`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + index * 0.05 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {size}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-            </div>
-            <div className="flex items-center gap-4">
+            </motion.div>
+
+            <motion.div
+              className="flex items-center gap-4"
+              variants={itemVariants}
+            >
               {/* Quantity */}
               <div>
-                <p className="text-sm font-medium  uppercase tracking-wide">
+                <p className="text-sm font-medium uppercase tracking-wide">
                   QTY
                 </p>
                 <div className="flex items-center gap-4">
-                  <select
+                  <motion.select
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
                     className="w-24 px-4 py-3 border border-gray-300 focus:outline-none focus:border-black"
+                    whileHover={{ scale: 1.02 }}
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <option key={num} value={num}>
                         {num}
                       </option>
                     ))}
-                  </select>
+                  </motion.select>
                 </div>
               </div>
 
               {/* Add to Wishlist Button */}
-              <button
+              <motion.button
                 onClick={handleToggleWishlist}
                 className="flex items-center gap-2 px-4 mt-5 py-3 border border-gray-300 hover:border-black transition"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <Heart size={20} />
+                <motion.div
+                  animate={inWishlist ? { scale: [1, 1.2, 1] } : {}}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Heart
+                    size={20}
+                    className={inWishlist ? "fill-red-500 text-red-500" : ""}
+                  />
+                </motion.div>
                 <span className="text-sm font-medium">
                   {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
                 </span>
-              </button>
-              </div>
+              </motion.button>
+            </motion.div>
 
-              {/* Add to Cart Button */}
-              <button
-                onClick={handleAddToCart}
-                className="w-full bg-black text-white py-4 font-bold text-sm tracking-wider hover:bg-gray-800 transition uppercase"
-              >
-                ADD TO CART
-              </button>
+            {/* Add to Cart Button */}
+            <motion.button
+              onClick={handleAddToCart}
+              className="w-full bg-black text-white py-4 font-bold text-sm tracking-wider hover:bg-gray-800 transition uppercase"
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              ADD TO CART
+            </motion.button>
+
             {/* Design & Aesthetic */}
-            <div className="pt-6 border-t">
+            <motion.div
+              className="pt-6 border-t"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+            >
               <h3 className="font-bold text-lg mb-3">Design & Aesthetic</h3>
               <p className="text-gray-700 leading-relaxed">
                 This premium soccer jersey features a sleek, monochromatic black
@@ -211,46 +292,56 @@ export default function ProductPage({ params }) {
                 professional "SetPiece" look. It includes a centered, tonal club
                 crest and a minimalist sponsor logo for a clean, modern finish.
               </p>
-            </div>
+            </motion.div>
 
             {/* Performance & Build */}
-            <div className="pt-6">
+            <motion.div
+              className="pt-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
               <h3 className="font-bold text-lg mb-4">Performance & Build</h3>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start gap-2">
-                  <span className="text-black mt-1">•</span>
-                  <span>
-                    <strong>Fabric:</strong> Lightweight, breathable performance
-                    mesh designed for elite-level play.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-black mt-1">•</span>
-                  <span>
-                    <strong>Fit:</strong> Standard athletic silhouette with
-                    reinforced stitching at the collar and sleeves.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-black mt-1">•</span>
-                  <span>
-                    <strong>Colors:</strong> Also available in alternate White
-                    and Royal Blue colorways.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-black mt-1">•</span>
-                  <span>
-                    <strong>Sizing:</strong> Offered in extended sizes including
-                    XL, XXL, and XXXL.
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+              <motion.ul className="space-y-2 text-gray-700">
+                {[
+                  {
+                    label: "Fabric:",
+                    text: "Lightweight, breathable performance mesh designed for elite-level play.",
+                  },
+                  {
+                    label: "Fit:",
+                    text: "Standard athletic silhouette with reinforced stitching at the collar and sleeves.",
+                  },
+                  {
+                    label: "Colors:",
+                    text: "Also available in alternate White and Royal Blue colorways.",
+                  },
+                  {
+                    label: "Sizing:",
+                    text: "Offered in extended sizes including XL, XXL, and XXXL.",
+                  },
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    className="flex items-start gap-2"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                  >
+                    <span className="text-black mt-1">•</span>
+                    <span>
+                      <strong>{item.label}</strong> {item.text}
+                    </span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
-          <RecommendedSection />
+      <RecommendedSection />
     </main>
   );
 }
