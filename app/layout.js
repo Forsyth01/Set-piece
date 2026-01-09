@@ -7,8 +7,10 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 export const metadata = {
-  title: "Headless Store",
-  description: "Modern headless ecommerce frontend",
+  title:"Setpiece — Premium Football Apparel",
+  
+  description:
+    "Premium football kits, training wear, and accessories designed for players, fans, and the modern game.",
 };
 
 export default function RootLayout({ children }) {
