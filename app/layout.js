@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 export const metadata = {
-  title:"Setpiece — Premium Football Apparel",
+  title:"Setpieces — Premium Football Apparel",
   
   description:
     "Premium football kits, training wear, and accessories designed for players, fans, and the modern game.",
