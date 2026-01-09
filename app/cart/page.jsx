@@ -1,12 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/app/context/CartContext";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } =
     useCart();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const handleClearCart = () => {
+    clearCart();
+    setShowConfirmModal(false);
+  };
 
   if (cart.length === 0) {
     return (
@@ -53,10 +61,11 @@ export default function CartPage() {
               </p>
             </div>
             <button
-              onClick={clearCart}
-              className="text-red-600 hover:text-red-800 text-sm font-medium transition"
+              onClick={() => setShowConfirmModal(true)}
+              className="flex items-center gap-2 text-red-600 hover:text-white hover:bg-red-600 border border-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-all"
             >
-              Clear All
+              <Trash2 size={16} />
+              Remove All
             </button>
           </div>
         </div>
@@ -206,6 +215,72 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirmModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowConfirmModal(false)}
+            />
+
+            {/* Modal */}
+            <motion.div
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+                >
+                  <X size={24} />
+                </button>
+
+                {/* Icon */}
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Trash2 size={32} className="text-red-600" />
+                </div>
+
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-center mb-3">
+                  Remove All Items?
+                </h2>
+
+                {/* Description */}
+                <p className="text-gray-600 text-center mb-8">
+                  Are you sure you want to remove all {getTotalItems()} items from your cart? This action cannot be undone.
+                </p>
+
+                {/* Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowConfirmModal(false)}
+                    className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleClearCart}
+                    className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                  >
+                    Remove All
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
