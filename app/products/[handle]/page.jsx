@@ -196,7 +196,7 @@ export default function ProductPage({ params }) {
               <p className="text-sm font-medium mb-3 uppercase tracking-wide">
                 Select Size
               </p>
-              <div className="flex gap-2">
+              <div className="lg:flex grid grid-cols-4  gap-2">
                 {product.sizes.map((size, index) => (
                   <motion.button
                     key={size}

@@ -603,7 +603,7 @@ export default function TopBar() {
                             <p className="text-sm font-bold mb-2">
                               ${product.price.toFixed(2)}
                             </p>
-                            <div className="flex gap-2 text-xs mb-2">
+                            <div className="lg:flex grid grid-cols-4 gap-2 text-xs mb-2">
                               {product.sizes?.map((size) => (
                                 <button
                                   key={size}
@@ -763,7 +763,7 @@ export default function TopBar() {
                             )}
                           </div>
 
-                          <div className="flex gap-2 mb-3">
+                          <div className=" lg:flex grid grid-cols-4  gap-2 mb-3">
                             {item.sizes?.map((size) => (
                               <motion.button
                                 key={size}
