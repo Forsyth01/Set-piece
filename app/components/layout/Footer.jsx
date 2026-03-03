@@ -143,7 +143,7 @@ export default function Footer() {
             className="text-gray-500
             text-[clamp(0.7rem,1.2vw,0.85rem)]"
           >
-            US Shipping Only • Authenticity Verified
+            Authenticity Verified
           </p>
         </motion.div>
       </motion.div>
