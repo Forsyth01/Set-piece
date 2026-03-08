@@ -10,51 +10,51 @@ import { girlsCollections } from "@/app/lib/mock-girls-collections";
 import { trendingCollections } from "@/app/lib/mock-trending-collections";
 
 const COLLECTION_MAP = {
-  accessories: { 
-    title: "Accessories", 
-    products: accessories, 
-    handle: "accessories" 
+  shorts: {
+    title: "Shorts",
+    products: soccerShorts,
+    handle: "shorts"
   },
+  jerseys: {
+    title: "Jerseys",
+    products: newArrivals,
+    handle: "jerseys"
+  },
+  caps: {
+    title: "Caps",
+    products: accessories,
+    handle: "caps"
+  },
+  hoodie: {
+    title: "Hoodie",
+    products: hoodiesJoggers,
+    handle: "hoodie"
+  },
+  sweatshirts: {
+    title: "Sweatshirts",
+    products: theVault,
+    handle: "sweatshirts"
+  },
+  sweatpants: {
+    title: "Sweatpants",
+    products: trendingCollections,
+    handle: "sweatpants"
+  },
+  // Keep old routes for backward compatibility
   "girls-collections": {
     title: "Girls Collections",
     products: girlsCollections,
     handle: "girls-collections"
   },
-  "hoodies-joggers": { 
-    title: "Hoodies & Joggers", 
-    products: hoodiesJoggers,
-    handle: "hoodies-joggers"
-  },
-  "new-arrivals": { 
-    title: "New Arrivals", 
-    products: newArrivals,
-    handle: "new-arrivals"
-  },
-  "soccer-shorts": { 
-    title: "Soccer Shorts", 
-    products: soccerShorts,
-    handle: "soccer-shorts"
-  },
-  "the-vault": { 
-    title: "The Vault", 
-    products: theVault,
-    handle: "the-vault"
-  },
-  "trendy-collections": { 
-    title: "Trendy Collections", 
-    products: trendingCollections,
-    handle: "trendy-collections"
-  },
 };
 
 const ALL_COLLECTIONS = [
-  { title: "New Arrivals", handle: "new-arrivals" },
-  { title: "Accessories", handle: "accessories" },
-  { title: "Girls Collections", handle: "girls-collections" },
-  { title: "Hoodies & Joggers", handle: "hoodies-joggers" },
-  { title: "Soccer Shorts", handle: "soccer-shorts" },
-  { title: "The Vault", handle: "the-vault" },
-  { title: "Trendy Collections", handle: "trendy-collections" },
+  { title: "Shorts", handle: "shorts" },
+  { title: "Jerseys", handle: "jerseys" },
+  { title: "Caps", handle: "caps" },
+  { title: "Hoodie", handle: "hoodie" },
+  { title: "Sweatshirts", handle: "sweatshirts" },
+  { title: "Sweatpants", handle: "sweatpants" },
 ];
 
 export default async function CollectionPage({ params }) {

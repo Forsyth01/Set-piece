@@ -6,17 +6,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, ChevronDown } from "lucide-react";
 
 const categories = [
-  { label: "New Arrivals", handle: "new-arrivals" },
-  { label: "Shorts", handle: "soccer-shorts" },
-  { label: "Hoodies", handle: "hoodies-joggers" },
-  { label: "Accessories", handle: "accessories" },
+  { label: "Shorts", handle: "shorts" },
+  { label: "Jerseys", handle: "jerseys" },
+  { label: "Caps", handle: "caps" },
+  { label: "Hoodie", handle: "hoodie" },
+  { label: "Sweatshirts", handle: "sweatshirts" },
+  { label: "Sweatpants", handle: "sweatpants" },
 ];
 
 const navItems = [
-  { label: "SHORTS", handle: "soccer-shorts" },
-  { label: "HOODIES", handle: "hoodies-joggers" },
-  { label: "ACCESSORIES", handle: "accessories" },
-  { label: "THE VAULT", handle: "the-vault" },
+  { label: "SHORTS", handle: "shorts" },
+  { label: "JERSEYS", handle: "jerseys" },
+  { label: "CAPS", handle: "caps" },
+  { label: "HOODIE", handle: "hoodie" },
+  { label: "SWEATSHIRTS", handle: "sweatshirts" },
+  { label: "SWEATPANTS", handle: "sweatpants" },
 ];
 
 export default function NavBar() {

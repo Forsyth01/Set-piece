@@ -630,24 +630,38 @@ export default function TopBar() {
             </div>
 
             {cart.length > 0 && (
-              <motion.div 
-                className="border-t bg-white p-6 space-y-4"
+              <motion.div
+                className="border-t bg-white p-6 space-y-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600 font-medium">Subtotal:</span>
+                  <span className="text-2xl font-bold">${getTotalPrice().toFixed(2)}</span>
+                </div>
+
+                <Link
+                  href="/checkout"
+                  onClick={() => setIsCartOpen(false)}
+                  className="block w-full bg-black text-white py-4 rounded-lg font-bold text-lg hover:bg-gray-800 transition text-center"
+                >
+                  PROCEED TO CHECKOUT
+                </Link>
+
                 <Link
                   href="/cart"
                   onClick={() => setIsCartOpen(false)}
-                  className="block w-full bg-black text-white py-4 rounded font-bold text-lg hover:bg-gray-800 transition text-center"
+                  className="block w-full bg-white text-black border-2 border-black py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition text-center"
                 >
-                  CHECKOUT - ${getTotalPrice().toFixed(2)}
+                  VIEW FULL CART
                 </Link>
+
                 <button
                   onClick={() => setIsCartOpen(false)}
                   className="w-full text-center text-sm text-gray-600 hover:text-black underline"
                 >
-                  Or Continue Shopping
+                  Continue Shopping
                 </button>
               </motion.div>
             )}

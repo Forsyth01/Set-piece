@@ -101,11 +101,12 @@ export default function Footer() {
 
           {/* Shop */}
           <FooterColumn title="SHOP" variants={itemVariants}>
-            <FooterLink href="/collections/jerseys">Jerseys</FooterLink>
             <FooterLink href="/collections/shorts">Shorts</FooterLink>
-            <FooterLink href="/collections/hoodies">Hoodies</FooterLink>
-            <FooterLink href="/collections/accessories">Accessories</FooterLink>
-            <FooterLink href="/collections/the-vault">The Vault</FooterLink>
+            <FooterLink href="/collections/jerseys">Jerseys</FooterLink>
+            <FooterLink href="/collections/caps">Caps</FooterLink>
+            <FooterLink href="/collections/hoodie">Hoodie</FooterLink>
+            <FooterLink href="/collections/sweatshirts">Sweatshirts</FooterLink>
+            <FooterLink href="/collections/sweatpants">Sweatpants</FooterLink>
           </FooterColumn>
 
           {/* Support */}
