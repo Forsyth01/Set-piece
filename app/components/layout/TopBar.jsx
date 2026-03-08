@@ -567,7 +567,7 @@ export default function TopBar() {
                     ))}
                   </AnimatePresence>
 
-                  <motion.div 
+                  {/* <motion.div 
                     className="pt-4"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -624,7 +624,7 @@ export default function TopBar() {
                         </motion.div>
                       ))}
                     </div>
-                  </motion.div>
+                  </motion.div> */}
                 </div>
               )}
             </div>
@@ -674,15 +674,15 @@ export default function TopBar() {
         {isWishlistOpen && (
           <motion.div
             id="sliding-wishlist"
-            className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+            className="fixed top-0 right-0 h-full w-full sm:max-w-md bg-white shadow-2xl z-50 flex flex-col"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
           >
-            <div className="flex justify-between items-center p-6 border-b">
-              <motion.h2 
-                className="text-xl font-bold"
+            <div className="flex justify-between items-center p-4 sm:p-6 border-b">
+              <motion.h2
+                className="text-lg sm:text-xl font-bold"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -727,64 +727,64 @@ export default function TopBar() {
                   </p>
                 </motion.div>
               ) : (
-                <div className="p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-4">
                   <AnimatePresence>
                     {wishlist.map((item, index) => (
                       <motion.div
                         key={item.id}
-                        className="flex gap-4 p-4 border rounded hover:shadow-md transition"
+                        className="flex gap-3 sm:gap-4 p-3 sm:p-4 border rounded hover:shadow-md transition"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ delay: index * 0.05 }}
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="w-24 h-24 bg-gray-100 rounded flex-shrink-0">
+                        <div className="w-20 h-20 sm:w-34 sm:h-24 bg-gray-100 rounded flex-shrink-0">
                           <img
                             src={item.image}
                             alt={item.title}
-                            className="w-full h-full object-contain p-2"
+                            className="w-full h-full object-contain p-1 sm:p-2"
                           />
                         </div>
 
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-2 gap-2">
                             <Link
                               href={`/products/${item.handle}`}
                               onClick={() => setIsWishlistOpen(false)}
-                              className="font-bold text-sm hover:text-gray-600"
+                              className="font-bold text-xs sm:text-sm hover:text-gray-600 line-clamp-2"
                             >
                               {item.title}
                             </Link>
                             <motion.button
                               onClick={() => removeFromWishlist(item.id)}
-                              className="text-gray-400 hover:text-red-600 transition"
+                              className="text-gray-400 hover:text-red-600 transition flex-shrink-0"
                               whileHover={{ scale: 1.1, rotate: 90 }}
                               whileTap={{ scale: 0.9 }}
                             >
-                              <X size={18} />
+                              <X size={16} className="sm:w-[18px] sm:h-[18px]" />
                             </motion.button>
                           </div>
 
-                          <div className="flex gap-2 items-center mb-3">
-                            <span className="text-lg font-bold">
+                          <div className="flex gap-2 items-center mb-2 sm:mb-3">
+                            <span className="text-base sm:text-lg font-bold">
                               ${item.price.toFixed(2)}
                             </span>
                             {item.compareAtPrice && (
-                              <span className="text-sm line-through text-gray-400">
+                              <span className="text-xs sm:text-sm line-through text-gray-400">
                                 ${item.compareAtPrice.toFixed(2)}
                               </span>
                             )}
                           </div>
 
-                          <div className=" lg:flex grid grid-cols-4  gap-2 mb-3">
+                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1 sm:gap-2 mb-2 sm:mb-3">
                             {item.sizes?.map((size) => (
                               <motion.button
                                 key={size}
                                 onClick={() =>
                                   handleAddToCartFromWishlist(item, size)
                                 }
-                                className="px-3 py-1 text-xs border rounded hover:bg-black hover:text-white transition"
+                                className="px-2 sm:px-3 py-1 text-xs border rounded hover:bg-black hover:text-white transition"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
@@ -813,8 +813,8 @@ export default function TopBar() {
             </div>
 
             {wishlist.length > 0 && (
-              <motion.div 
-                className="border-t bg-white p-6"
+              <motion.div
+                className="border-t bg-white p-4 sm:p-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
