@@ -1,27 +1,17 @@
 @import "tailwindcss";
 
-body,a {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  /* font-family: "PT Sans", sans-serif; */
+* {
+  font-family: "Space Grotesk", sans-serif;
 }
 
-.inter {
-  /* font-family: "Inter", sans-serif !important; */
+body {
+  font-family: "Space Grotesk", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  /* font-family: "Archivo Black", sans-serif; */
-}
-
-.black {
-  /* font-family: "Archivo Black", sans-serif; */
-}
-.head{
-  /* font-family: "Archivo Black", sans-serif; */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
 }
 
