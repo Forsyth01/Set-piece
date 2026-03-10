@@ -16,6 +16,12 @@ import {
   Plus,
   Trash2,
   Loader2,
+  Menu,
+  ChevronRight,
+  Home,
+  Package,
+  Mail,
+  HelpCircle,
 } from "lucide-react";
 import { searchProducts } from "@/app/lib/shopify/api";
 
@@ -27,7 +33,33 @@ export default function TopBar() {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [showClearCartModal, setShowClearCartModal] = useState(false);
   const [showClearWishlistModal, setShowClearWishlistModal] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const router = useRouter();
+
+  // Navigation links for mobile menu
+  const navLinks = [
+    { name: "Home", href: "/", icon: Home },
+    { name: "Shorts", href: "/collections/shorts", icon: Package },
+    { name: "Jerseys", href: "/collections/jerseys", icon: Package },
+    { name: "Caps", href: "/collections/caps-1", icon: Package },
+    { name: "Hoodies", href: "/collections/hoodie", icon: Package },
+    { name: "Sweatshirts", href: "/collections/sweatshirts", icon: Package },
+    { name: "Sweatpants", href: "/collections/sweatpants", icon: Package },
+  ];
+
+  const supportLinks = [
+    { name: "Contact Us", href: "/contact", icon: Mail },
+    { name: "FAQ", href: "/faq", icon: HelpCircle },
+  ];
+
+  const handleMobileSearch = (e) => {
+    e.preventDefault();
+    if (!mobileSearchQuery.trim()) return;
+    setIsMobileMenuOpen(false);
+    router.push(`/search?q=${encodeURIComponent(mobileSearchQuery)}`);
+    setMobileSearchQuery("");
+  };
 
   const {
     cart,
@@ -110,12 +142,22 @@ export default function TopBar() {
 
   return (
     <>
-      <motion.div 
-        className="max-w-7xl mx-auto px-4 md:px-6 py-6 flex items-center gap-4"
+      <motion.div
+        className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center gap-4"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {/* Mobile Menu Button */}
+        <motion.button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="md:hidden p-2 -ml-2 hover:bg-gray-100 rounded-lg transition"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Menu size={24} />
+        </motion.button>
+
         {/* Logo */}
         <Link
           href="/"
@@ -836,6 +878,172 @@ export default function TopBar() {
               </motion.div>
             )}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Navigation Sidebar */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            {/* Sidebar */}
+            <motion.div
+              className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-white z-50 md:hidden flex flex-col shadow-2xl"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-gray-100">
+                <Link
+                  href="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-2"
+                >
+                  <img src="/logo-icon.png" alt="" className="h-7 object-contain" />
+                  <img src="/logo.png" alt="SetPiece" className="h-6 object-contain" />
+                </Link>
+                <motion.button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X size={24} />
+                </motion.button>
+              </div>
+
+              {/* Mobile Search */}
+              <div className="p-4 border-b border-gray-100">
+                <form onSubmit={handleMobileSearch} className="relative">
+                  <input
+                    type="text"
+                    value={mobileSearchQuery}
+                    onChange={(e) => setMobileSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black focus:bg-white transition"
+                  />
+                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                </form>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto py-4">
+                <div className="px-4 mb-2">
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Shop
+                  </span>
+                </div>
+                <nav className="space-y-1 px-2">
+                  {navLinks.map((link, index) => (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
+                          <span className="font-medium text-gray-700 group-hover:text-black transition">
+                            {link.name}
+                          </span>
+                        </div>
+                        <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
+
+                <div className="px-4 mt-6 mb-2">
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Support
+                  </span>
+                </div>
+                <nav className="space-y-1 px-2">
+                  {supportLinks.map((link, index) => (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (navLinks.length + index) * 0.05 }}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
+                          <span className="font-medium text-gray-700 group-hover:text-black transition">
+                            {link.name}
+                          </span>
+                        </div>
+                        <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
+              </div>
+
+              {/* Footer */}
+              <div className="border-t border-gray-100 p-4 space-y-3">
+                {/* Quick Actions */}
+                <div className="flex gap-3">
+                  <motion.button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsWishlistOpen(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition"
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Heart size={20} />
+                    <span className="text-sm font-medium">Wishlist</span>
+                    {wishlistItemCount > 0 && (
+                      <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        {wishlistItemCount}
+                      </span>
+                    )}
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsCartOpen(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition"
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <ShoppingBag size={20} />
+                    <span className="text-sm font-medium">Cart</span>
+                    {cartItemCount > 0 && (
+                      <span className="bg-white text-black text-xs px-2 py-0.5 rounded-full">
+                        {cartItemCount}
+                      </span>
+                    )}
+                  </motion.button>
+                </div>
+
+                {/* Social/Brand */}
+                <p className="text-center text-xs text-gray-400">
+                  Premium Soccer Apparel
+                </p>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

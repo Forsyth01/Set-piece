@@ -63,7 +63,11 @@ export async function shopifyFetch({ query, variables = {} }) {
  * @returns {boolean}
  */
 export function isShopifyConfigured() {
-  return Boolean(domain && storefrontAccessToken);
+  const configured = Boolean(domain && storefrontAccessToken);
+  if (!configured) {
+    console.error('Shopify NOT configured. Domain:', domain ? 'SET' : 'MISSING', 'Token:', storefrontAccessToken ? 'SET' : 'MISSING');
+  }
+  return configured;
 }
 
 /**
