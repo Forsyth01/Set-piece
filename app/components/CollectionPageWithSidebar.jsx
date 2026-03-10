@@ -112,8 +112,8 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
   const [priceOpen, setPriceOpen] = useState(true);
   const [stockOpen, setStockOpen] = useState(false);
   const [collectionsOpen, setCollectionsOpen] = useState(true);
-  const [minPrice, setMinPrice] = useState(67);
-  const [maxPrice, setMaxPrice] = useState(131);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
   const [selectedCollections, setSelectedCollections] = useState([collection.handle]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stockFilter, setStockFilter] = useState("");
@@ -405,34 +405,34 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
   );
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* Mobile Menu Button */}
-      <motion.button
+    <div className="min-h-screen">
+      {/* Mobile Menu Button - COMMENTED OUT */}
+      {/* <motion.button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="hidden fixed top-20 left-4 z-50 bg-black text-white p-3 rounded-full shadow-lg"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
         <Menu size={20} />
-      </motion.button>
+      </motion.button> */}
 
-      {/* Sidebar - Desktop */}
-      <aside className="hidden lg:block w-64 bg-gray-50 p-6 border-r overflow-y-auto">
+      {/* Sidebar - Desktop - COMMENTED OUT */}
+      {/* <aside className="hidden lg:block w-64 bg-gray-50 p-6 border-r overflow-y-auto">
         <SidebarContent />
-      </aside>
+      </aside> */}
 
-      {/* Sidebar - Mobile (Overlay) */}
-      <AnimatePresence>
+      {/* Sidebar - Mobile (Overlay) - COMMENTED OUT */}
+      {/* <AnimatePresence>
         {sidebarOpen && (
           <>
-            <motion.div 
+            <motion.div
               className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
               onClick={() => setSidebarOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <motion.aside 
+            <motion.aside
               className="lg:hidden fixed top-0 left-0 bottom-0 w-80 bg-gray-50 p-6 z-50 overflow-y-auto"
               initial={{ x: -320 }}
               animate={{ x: 0 }}
@@ -449,10 +449,10 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
             </motion.aside>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8">
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Results Count */}
         <motion.div 
           className="mb-6 flex justify-between items-center"
@@ -472,7 +472,7 @@ export default function CollectionPageWithSidebar({ collection, allCollections }
 
         {/* Product Grid */}
         <motion.div 
-          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
           key={currentPage}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

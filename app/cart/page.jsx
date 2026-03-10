@@ -2,19 +2,40 @@
 
 import { useState } from "react";
 import { useCart } from "@/app/context/CartContext";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, X } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } =
-    useCart();
+  const {
+    cart,
+    removeFromCart,
+    updateQuantity,
+    getTotalPrice,
+    getTotalItems,
+    clearCart,
+    proceedToCheckout,
+    isLoading,
+    isInitialized,
+  } = useCart();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleClearCart = () => {
     clearCart();
     setShowConfirmModal(false);
   };
+
+  // Loading state while cart initializes
+  if (!isInitialized) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 size={48} className="animate-spin mx-auto mb-4 text-gray-400" />
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (cart.length === 0) {
     return (
@@ -62,7 +83,8 @@ export default function CartPage() {
             </div>
             <button
               onClick={() => setShowConfirmModal(true)}
-              className="flex items-center gap-2 text-red-600 hover:text-white hover:bg-red-600 border border-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              disabled={isLoading}
+              className="flex items-center gap-2 text-red-600 hover:text-white hover:bg-red-600 border border-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50"
             >
               <Trash2 size={16} />
               Remove All
@@ -75,7 +97,7 @@ export default function CartPage() {
           <div className="lg:col-span-2 space-y-4">
             {cart.map((item) => (
               <div
-                key={`${item.id}-${item.size}`}
+                key={item.lineId || `${item.id}-${item.size}`}
                 className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex gap-6">
@@ -97,7 +119,7 @@ export default function CartPage() {
                           Size: {item.size}
                         </span>
                         <span className="font-semibold text-black text-lg">
-                          ${item.price.toFixed(2)}
+                          ${item.price?.toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -107,9 +129,12 @@ export default function CartPage() {
                       <div className="flex items-center gap-3 bg-gray-50 rounded-full px-2 py-1">
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.size, item.quantity - 1)
+                            item.lineId
+                              ? updateQuantity(item.lineId, item.quantity - 1)
+                              : updateQuantity(item.id, item.size, item.quantity - 1)
                           }
-                          className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-full transition"
+                          disabled={isLoading}
+                          className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-full transition disabled:opacity-50"
                         >
                           <Minus size={16} />
                         </button>
@@ -118,9 +143,12 @@ export default function CartPage() {
                         </span>
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.size, item.quantity + 1)
+                            item.lineId
+                              ? updateQuantity(item.lineId, item.quantity + 1)
+                              : updateQuantity(item.id, item.size, item.quantity + 1)
                           }
-                          className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-full transition"
+                          disabled={isLoading}
+                          className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-full transition disabled:opacity-50"
                         >
                           <Plus size={16} />
                         </button>
@@ -128,8 +156,13 @@ export default function CartPage() {
 
                       {/* Remove Button */}
                       <button
-                        onClick={() => removeFromCart(item.id, item.size)}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded-full transition"
+                        onClick={() =>
+                          item.lineId
+                            ? removeFromCart(item.lineId)
+                            : removeFromCart(item.id, item.size)
+                        }
+                        disabled={isLoading}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded-full transition disabled:opacity-50"
                       >
                         <Trash2 size={20} />
                       </button>
@@ -179,8 +212,19 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-black text-white py-4 rounded-full hover:bg-gray-800 transition-all hover:scale-105 font-semibold text-lg mb-4 shadow-lg">
-                Proceed to Checkout
+              <button
+                onClick={proceedToCheckout}
+                disabled={isLoading || cart.length === 0}
+                className="w-full bg-black text-white py-4 rounded-full hover:bg-gray-800 transition-all hover:scale-105 font-semibold text-lg mb-4 shadow-lg disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Proceed to Checkout"
+                )}
               </button>
 
               <Link
@@ -202,7 +246,7 @@ export default function CartPage() {
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                     🔒
                   </div>
-                  <span>Secure checkout</span>
+                  <span>Secure checkout powered by Shopify</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
@@ -237,7 +281,7 @@ export default function CartPage() {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative">
                 {/* Close Button */}
                 <button
                   onClick={() => setShowConfirmModal(false)}
@@ -271,9 +315,10 @@ export default function CartPage() {
                   </button>
                   <button
                     onClick={handleClearCart}
-                    className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                    disabled={isLoading}
+                    className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium disabled:opacity-50"
                   >
-                    Remove All
+                    {isLoading ? "Removing..." : "Remove All"}
                   </button>
                 </div>
               </div>

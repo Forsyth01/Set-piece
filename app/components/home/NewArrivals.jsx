@@ -1,13 +1,20 @@
 import ProductSwiper from "../ProductSwiper";
 import ProductCard from "../product/ProductCard";
-import { newArrivals } from "../../lib/mock-new-arrivals";
+import { getCollectionByHandle } from "@/app/lib/shopify/api";
 
-export default function NewArrivals() {
+export default async function NewArrivals() {
+  const collection = await getCollectionByHandle("new-arrivals", 8);
+  const products = collection?.products || [];
+
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <ProductSwiper
       eyebrow="SETPIECE"
       title="NEW ARRIVALS"
-      products={newArrivals}
+      products={products}
       ProductCard={ProductCard}
       viewAllText="Want more of this?"
       viewAllHref="/collections/new-arrivals"

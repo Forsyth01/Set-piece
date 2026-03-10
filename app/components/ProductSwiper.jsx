@@ -11,7 +11,7 @@ export default function ProductSwiper({
   viewAllHref,
 }) {
   return (
-    <section className="max-w-7xl mx-auto px-6 py-10 sm:py-20">
+    <section className="max-w-7xl mx-auto px-6 py-10 sm:py-20 ">
       {/* Header */}
       <div className="mb-12">
         {eyebrow && (
@@ -20,7 +20,7 @@ export default function ProductSwiper({
           </span>
         )}
 
-        <h2 className="font-bold mt-2 text-[clamp(1.5rem,3vw,2.2rem)]">
+        <h2 className="head mt-2 text-[clamp(1.5rem,3vw,2.2rem)]">
           {title}
         </h2>
       </div>
@@ -33,6 +33,7 @@ export default function ProductSwiper({
           sm:grid-cols-2
           md:grid-cols-3
           lg:grid-cols-4
+          sm:gap-10
           gap-6
         "
       >

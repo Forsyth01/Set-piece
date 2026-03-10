@@ -1,209 +1,225 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { Instagram, Mail, MapPin, Phone, ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 export default function Footer() {
-  // Container animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
 
-  // Item animation variants
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setEmail("");
+    }
   };
 
   return (
-    <footer className="bg-neutral-900 text-white overflow-hidden">
-      <motion.div 
-        className="max-w-7xl mx-auto px-6 py-20"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={containerVariants}
-      >
-        {/* Top section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          
-          {/* Brand */}
-          <motion.div variants={itemVariants}>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="font-bold">
-                <div className="flex items-center gap-2">
-                  <motion.img 
-                    src="/logo_icon_white.png" 
-                    alt="" 
-                    className="h-10"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <motion.img 
-                    src="/logo_white.png" 
-                    alt="" 
-                    className="h-10"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5, duration: 0.6 }}
-                  />
-                </div>
-              </span>
+    <footer className="bg-black text-white">
+      {/* Newsletter Section */}
+      <div className="border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                Join the SetPiece Club
+              </h2>
+              <p className="text-gray-400 text-sm sm:text-base">
+                Get 10% off your first order, early access to drops, and exclusive offers.
+              </p>
             </div>
+            <form onSubmit={handleSubscribe} className="flex gap-3">
+              <div className="flex-1 relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:border-white/30 transition"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-6 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition flex items-center gap-2"
+              >
+                {subscribed ? "Subscribed!" : "Subscribe"}
+                <ArrowRight size={18} />
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
 
-            <p
-              className="text-gray-400 max-w-xs mb-6
-              text-[clamp(0.8rem,1.3vw,0.95rem)]"
-            >
-              Premium soccer apparel for the modern football fan.
-              Authentic quality, streetwear style.
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10">
+
+          {/* Brand Column */}
+          <div className="col-span-2 md:col-span-4 lg:col-span-1">
+            <div className="flex items-center gap-2 mb-6">
+              <img src="/logo_icon_white.png" alt="SetPiece" className="h-8" />
+              <img src="/logo_white.png" alt="SetPiece" className="h-6" />
+            </div>
+            <p className="text-gray-400 text-sm mb-6 max-w-xs">
+              Premium soccer apparel for the modern football fan. Authentic quality, streetwear style.
             </p>
-
-            <div className="flex gap-4">
-              <motion.a
-                href="#"
-                aria-label="Instagram"
-                className="border border-white/20 p-2 rounded-md
-                hover:bg-white hover:text-black transition cursor-pointer"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
+            <div className="flex gap-3">
+              <a
+                href="https://www.instagram.com/setpiecesclothing?igsh=MWw3dnd4MTRhcmVrag=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition"
               >
                 <Instagram size={18} />
-              </motion.a>
-
-              <motion.a
-                href="#"
-                aria-label="X"
-                className="border border-white/20 p-2 rounded-md
-                hover:bg-white hover:text-black transition cursor-pointer"
-                whileHover={{ scale: 1.1, rotate: -5 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <X size={18} />
-              </motion.a>
+              </a>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Shop */}
-          <FooterColumn title="SHOP" variants={itemVariants}>
-            <FooterLink href="/collections/shorts">Shorts</FooterLink>
-            <FooterLink href="/collections/jerseys">Jerseys</FooterLink>
-            <FooterLink href="/collections/caps">Caps</FooterLink>
-            <FooterLink href="/collections/hoodie">Hoodie</FooterLink>
-            <FooterLink href="/collections/sweatshirts">Sweatshirts</FooterLink>
-            <FooterLink href="/collections/sweatpants">Sweatpants</FooterLink>
-          </FooterColumn>
+          {/* Shop Column */}
+          <div>
+            <h3 className="text-sm font-semibold tracking-wider uppercase mb-6">Shop</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/collections/shorts" className="text-gray-400 text-sm hover:text-white transition">
+                  Shorts
+                </Link>
+              </li>
+              <li>
+                <Link href="/collections/jerseys" className="text-gray-400 text-sm hover:text-white transition">
+                  Jerseys
+                </Link>
+              </li>
+              <li>
+                <Link href="/collections/caps" className="text-gray-400 text-sm hover:text-white transition">
+                  Caps
+                </Link>
+              </li>
+              <li>
+                <Link href="/collections/hoodie" className="text-gray-400 text-sm hover:text-white transition">
+                  Hoodies
+                </Link>
+              </li>
+              <li>
+                <Link href="/collections/sweatshirts" className="text-gray-400 text-sm hover:text-white transition">
+                  Sweatshirts
+                </Link>
+              </li>
+              <li>
+                <Link href="/collections/sweatpants" className="text-gray-400 text-sm hover:text-white transition">
+                  Sweatpants
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-          {/* Support */}
-          <FooterColumn title="SUPPORT" variants={itemVariants}>
-            <FooterLink href="/fit-guide">Fit Guide</FooterLink>
-            <FooterLink href="/shipping">Shipping & Returns</FooterLink>
-            <FooterLink href="/faq">FAQ</FooterLink>
-            <FooterLink href="/contact">Contact</FooterLink>
-          </FooterColumn>
+          {/* Support Column */}
+          <div>
+            <h3 className="text-sm font-semibold tracking-wider uppercase mb-6">Support</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/fit-guide" className="text-gray-400 text-sm hover:text-white transition">
+                  Size Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping" className="text-gray-400 text-sm hover:text-white transition">
+                  Shipping & Returns
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-gray-400 text-sm hover:text-white transition">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-gray-400 text-sm hover:text-white transition">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/track-order" className="text-gray-400 text-sm hover:text-white transition">
+                  Track Order
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-          {/* Trust */}
-          <FooterColumn title="TRUST & SAFETY" variants={itemVariants}>
-            <FooterLink href="/authenticity">
-              Authenticity Guarantee
-            </FooterLink>
-            <FooterLink href="/track-order">Track Item</FooterLink>
-            <FooterLink href="/privacy-policy">Privacy Policy</FooterLink>
-            <FooterLink href="/terms">Terms of Service</FooterLink>
-          </FooterColumn>
+          {/* Company Column */}
+          <div>
+            <h3 className="text-sm font-semibold tracking-wider uppercase mb-6">Company</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/about" className="text-gray-400 text-sm hover:text-white transition">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/careers" className="text-gray-400 text-sm hover:text-white transition">
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="text-gray-400 text-sm hover:text-white transition">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-gray-400 text-sm hover:text-white transition">
+                  Terms of Service
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Column */}
+          <div className="col-span-2 md:col-span-1">
+            <h3 className="text-sm font-semibold tracking-wider uppercase mb-6">Contact</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <Mail size={18} className="text-gray-500 mt-0.5" />
+                <span className="text-gray-400 text-sm">cs@setpiecesclothing.com</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Phone size={18} className="text-gray-500 mt-0.5" />
+                <span className="text-gray-400 text-sm">+1 (555) 123-4567</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin size={18} className="text-gray-500 mt-0.5" />
+                <span className="text-gray-400 text-sm">USA</span>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
 
-        {/* Divider */}
-        <motion.div 
-          className="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between gap-6"
-          variants={itemVariants}
-        >
-          <p
-            className="text-gray-500
-            text-[clamp(0.7rem,1.2vw,0.85rem)]"
-          >
-            © {new Date().getFullYear()} SetPieces. All rights reserved.
-          </p>
+      {/* Bottom Bar */}
+      <div className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-500 text-sm">
+              © {new Date().getFullYear()} SetPiece. All rights reserved.
+            </p>
 
-          <p
-            className="text-gray-500
-            text-[clamp(0.7rem,1.2vw,0.85rem)]"
-          >
-            Authenticity Verified
-          </p>
-        </motion.div>
-      </motion.div>
+            {/* Payment Methods */}
+            <div className="flex items-center gap-3">
+              <span className="text-gray-500 text-xs mr-2">We accept</span>
+              <div className="flex gap-2">
+                {["Visa", "MC", "Amex", "PayPal"].map((method) => (
+                  <div
+                    key={method}
+                    className="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400 font-medium"
+                  >
+                    {method}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </footer>
-  );
-}
-
-/* ---------- Helpers ---------- */
-
-function FooterColumn({ title, children, variants }) {
-  const linkVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: (i) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.4,
-      },
-    }),
-  };
-
-  return (
-    <motion.div variants={variants}>
-      <h3
-        className="mb-6 tracking-widest
-        text-[clamp(0.75rem,1.2vw,0.85rem)]"
-      >
-        {title}
-      </h3>
-      <motion.ul 
-        className="space-y-4"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-      >
-        {children}
-      </motion.ul>
-    </motion.div>
-  );
-}
-
-function FooterLink({ href, children }) {
-  return (
-    <motion.li
-      initial={{ opacity: 0, x: -10 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
-      whileHover={{ x: 5 }}
-    >
-      <Link
-        href={href}
-        className="text-gray-400 hover:text-white transition
-        cursor-pointer
-        text-[clamp(0.8rem,1.3vw,0.95rem)]"
-      >
-        {children}
-      </Link>
-    </motion.li>
   );
 }

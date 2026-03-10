@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
 body,a {
-  font-family: "PT Sans", sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  /* font-family: "PT Sans", sans-serif; */
 }
 
 .inter {
-  font-family: "Inter", sans-serif !important;
+  /* font-family: "Inter", sans-serif !important; */
 }
 
 h1,
@@ -14,9 +15,13 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Archivo Black", sans-serif;
+  /* font-family: "Archivo Black", sans-serif; */
 }
 
 .black {
-  font-family: "Archivo Black", sans-serif;
+  /* font-family: "Archivo Black", sans-serif; */
 }
+.head{
+  /* font-family: "Archivo Black", sans-serif; */
+}
+

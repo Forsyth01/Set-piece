@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown, ArrowRight } from "lucide-react";
 
 const categories = [
   { label: "Shorts", handle: "shorts" },
@@ -41,7 +41,7 @@ export default function NavBar() {
 
   return (
     <motion.div 
-      className="border-t"
+      className="border-t border-gray-300"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -56,56 +56,23 @@ export default function NavBar() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <motion.div
+            {/* <motion.div
               animate={{ rotate: open ? 180 : 0 }}
               transition={{ duration: 0.3 }}
             >
               <Menu size={20} />
-            </motion.div>
-            <span className="hidden sm:inline text-md font-bold">CATEGORIES</span>
+            </motion.div> */}
+            <span className="hidden sm:inline text-md tracking-[0.5rem] font-light">CATEGORIES</span>
             <motion.div
               animate={{ rotate: open ? 180 : 0 }}
               transition={{ duration: 0.3 }}
             >
-              <ChevronDown size={16} />
+              {/* <ChevronDown size={16} /> */}
+              <ArrowRight size={16}/>
             </motion.div>
           </motion.button>
 
-          <AnimatePresence>
-            {open && (
-              <motion.div
-                className="absolute left-0 mt-3 w-56 bg-white border rounded-md shadow-lg z-50 overflow-hidden"
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                <ul className="py-2">
-                  {categories.map((cat, index) => (
-                    <motion.li
-                      key={cat.handle}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Link
-                        href={`/collections/${cat.handle}`}
-                        onClick={() => setOpen(false)}
-                        className="block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer transition-colors"
-                      >
-                        <motion.span
-                          whileHover={{ x: 5 }}
-                          className="inline-block"
-                        >
-                          {cat.label}
-                        </motion.span>
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          
         </div>
 
         {/* Desktop Nav */}
@@ -142,29 +109,6 @@ export default function NavBar() {
           ))}
         </motion.nav>
 
-        {/* Featured */}
-        <Link
-          href="/collections/girls-collections"
-          className="text-md font-bold uppercase cursor-pointer relative group"
-        >
-          <motion.span
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="inline-block"
-            whileHover={{ scale: 1.05, y: -2 }}
-          >
-            GIRLS COLLECTION
-          </motion.span>
-          
-          {/* Underline animation */}
-          <motion.span
-            className="absolute left-0 bottom-0 h-0.5 bg-black"
-            initial={{ width: 0 }}
-            whileHover={{ width: "100%" }}
-            transition={{ duration: 0.3 }}
-          />
-        </Link>
       </div>
     </motion.div>
   );

@@ -67,6 +67,7 @@ export function WishlistProvider({ children }) {
             price: product.price,
             compareAtPrice: product.compareAtPrice,
             sizes: product.sizes,
+            variants: product.variants, // Include variants for Shopify cart
           },
         ];
       }

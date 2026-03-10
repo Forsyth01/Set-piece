@@ -15,24 +15,9 @@ import {
   Minus,
   Plus,
   Trash2,
+  Loader2,
 } from "lucide-react";
-
-// Import products for suggestions
-import { accessories } from "@/app/lib/mock-accessories";
-import { girlsCollections } from "@/app/lib/mock-girls-collections";
-import { hoodiesJoggers } from "@/app/lib/mock-hoodies-joggers";
-import { newArrivals } from "@/app/lib/mock-new-arrivals";
-import { soccerShorts } from "@/app/lib/mock-soccer-shorts";
-import { theVault } from "@/app/lib/mock-the-vault";
-
-const ALL_PRODUCTS = [
-  ...accessories,
-  ...girlsCollections,
-  ...hoodiesJoggers,
-  ...newArrivals,
-  ...soccerShorts,
-  ...theVault,
-];
+import { searchProducts } from "@/app/lib/shopify/api";
 
 export default function TopBar() {
   const [query, setQuery] = useState("");
@@ -52,14 +37,15 @@ export default function TopBar() {
     getTotalPrice,
     addToCart,
     clearCart,
+    proceedToCheckout,
+    isLoading,
   } = useCart();
   const { wishlist, removeFromWishlist, getTotalWishlistItems, clearWishlist } = useWishlist();
 
   const cartItemCount = getTotalItems();
   const wishlistItemCount = getTotalWishlistItems();
   const searchRef = useRef(null);
-
-  const recommendations = newArrivals.slice(0, 2);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -71,18 +57,27 @@ export default function TopBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Search with debounce using Shopify API
   useEffect(() => {
     if (query.trim().length < 2) {
       setSuggestions([]);
       return;
     }
 
-    const searchTerm = query.toLowerCase();
-    const matches = ALL_PRODUCTS.filter((product) =>
-      product.title.toLowerCase().includes(searchTerm)
-    ).slice(0, 5);
+    const timeoutId = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const results = await searchProducts(query, 5);
+        setSuggestions(results);
+      } catch (error) {
+        console.error("Search error:", error);
+        setSuggestions([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
 
-    setSuggestions(matches);
+    return () => clearTimeout(timeoutId);
   }, [query]);
 
   function handleSearch(e) {
@@ -144,7 +139,7 @@ export default function TopBar() {
         <div className="w-[50%] m-auto">
           <form
             onSubmit={handleSearch}
-            className="hidden md:block flex-2 relative"
+            className="hidden md:block flex-2 relative "
             ref={searchRef}
           >
             <motion.input
@@ -156,7 +151,7 @@ export default function TopBar() {
               }}
               onFocus={() => setShowSuggestions(true)}
               placeholder="Search for products"
-              className="w-full border border-[#C8C8C8] px-4 py-2 pr-20 focus:outline-none focus:ring-2 focus:ring-[#C8C8C8]"
+              className="w-full border border-[#C8C8C8] px-4 py-3 pr-20 focus:outline-none focus:ring-1 focus:ring-[#C8C8C8] rounded-full"
               whileFocus={{ scale: 1.01 }}
               transition={{ duration: 0.2 }}
             />
@@ -286,13 +281,13 @@ export default function TopBar() {
             </AnimatePresence>
           </motion.button>
 
-          <motion.button 
+          {/* <motion.button 
             className="cursor-pointer hover:text-gray-600 transition"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <User size={22} />
-          </motion.button>
+          </motion.button> */}
         </div>
       </motion.div>
 
@@ -440,14 +435,14 @@ export default function TopBar() {
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
           >
             {/* Cart Header */}
-            <div className="flex justify-between items-center p-6 border-b">
+            <div className="flex justify-between items-center p-6 border-b border-gray-200">
               <motion.h2 
-                className="text-xl font-bold"
+                className="text-xl font-medium"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                Shopping Cart ({cartItemCount})
+                 Cart ({cartItemCount})
               </motion.h2>
               <div className="flex items-center gap-2">
                 {cart.length > 0 && (
@@ -488,14 +483,14 @@ export default function TopBar() {
                   <AnimatePresence>
                     {cart.map((item, index) => (
                       <motion.div
-                        key={`${item.id}-${item.size}`}
-                        className="flex gap-4 pb-6 border-b"
+                        key={item.lineId || `${item.id}-${item.size}`}
+                        className="flex gap-4 pb-6 border-b border-gray-200"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <div className="w-24 h-24 bg-gray-100 rounded flex-shrink-0">
+                        <div className="w-24 h-24  rounded flex-shrink-0">
                           <img
                             src={item.image}
                             alt={item.title}
@@ -506,29 +501,28 @@ export default function TopBar() {
                         <div className="flex-1">
                           <h3 className="font-bold text-sm mb-1">{item.title}</h3>
                           <p className="text-lg font-bold mb-2">
-                            ${item.price.toFixed(2)}
+                            ${item.price?.toFixed(2)}
                           </p>
                           <p className="text-sm text-gray-600 mb-3">
                             Size: {item.size}
                           </p>
 
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 border rounded">
+                            <div className="flex items-center gap-2 border border-gray-400 rounded">
                               <motion.button
                                 onClick={() =>
-                                  updateQuantity(
-                                    item.id,
-                                    item.size,
-                                    item.quantity - 1
-                                  )
+                                  item.lineId
+                                    ? updateQuantity(item.lineId, item.quantity - 1)
+                                    : updateQuantity(item.id, item.size, item.quantity - 1)
                                 }
-                                className="p-2 hover:bg-gray-100"
+                                disabled={isLoading}
+                                className="p-2 hover:bg-gray-100 disabled:opacity-50"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
                                 <Minus size={14} />
                               </motion.button>
-                              <motion.span 
+                              <motion.span
                                 className="w-8 text-center font-semibold"
                                 key={item.quantity}
                                 initial={{ scale: 1.2 }}
@@ -538,13 +532,12 @@ export default function TopBar() {
                               </motion.span>
                               <motion.button
                                 onClick={() =>
-                                  updateQuantity(
-                                    item.id,
-                                    item.size,
-                                    item.quantity + 1
-                                  )
+                                  item.lineId
+                                    ? updateQuantity(item.lineId, item.quantity + 1)
+                                    : updateQuantity(item.id, item.size, item.quantity + 1)
                                 }
-                                className="p-2 hover:bg-gray-100"
+                                disabled={isLoading}
+                                className="p-2 hover:bg-gray-100 disabled:opacity-50"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                               >
@@ -553,13 +546,18 @@ export default function TopBar() {
                             </div>
 
                             <motion.button
-                              onClick={() => removeFromCart(item.id, item.size)}
-                              className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm"
+                              onClick={() =>
+                                item.lineId
+                                  ? removeFromCart(item.lineId)
+                                  : removeFromCart(item.id, item.size)
+                              }
+                              disabled={isLoading}
+                              className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm disabled:opacity-50"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
                               <Trash2 size={16} />
-                              Remove
+                              {/* Remove */}
                             </motion.button>
                           </div>
                         </div>
@@ -631,7 +629,7 @@ export default function TopBar() {
 
             {cart.length > 0 && (
               <motion.div
-                className="border-t bg-white p-6 space-y-3"
+                className="border-t border-gray-300 bg-white p-6 space-y-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
@@ -641,21 +639,31 @@ export default function TopBar() {
                   <span className="text-2xl font-bold">${getTotalPrice().toFixed(2)}</span>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  onClick={() => setIsCartOpen(false)}
-                  className="block w-full bg-black text-white py-4 rounded-lg font-bold text-lg hover:bg-gray-800 transition text-center"
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    proceedToCheckout();
+                  }}
+                  disabled={isLoading}
+                  className="w-full bg-black text-white py-4 rounded-full font-bold text-lg hover:bg-gray-800 transition text-center disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  PROCEED TO CHECKOUT
-                </Link>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      PROCESSING...
+                    </>
+                  ) : (
+                    "PROCEED TO CHECKOUT"
+                  )}
+                </button>
 
-                <Link
+                {/* <Link
                   href="/cart"
                   onClick={() => setIsCartOpen(false)}
                   className="block w-full bg-white text-black border-2 border-black py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition text-center"
                 >
                   VIEW FULL CART
-                </Link>
+                </Link> */}
 
                 <button
                   onClick={() => setIsCartOpen(false)}
@@ -680,14 +688,14 @@ export default function TopBar() {
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
           >
-            <div className="flex justify-between items-center p-4 sm:p-6 border-b">
+            <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-300">
               <motion.h2
-                className="text-lg sm:text-xl font-bold"
+                className="text-lg sm:text-xl font-medium"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                My Wishlist ({wishlistItemCount})
+               Wishlist ({wishlistItemCount})
               </motion.h2>
               <div className="flex items-center gap-2">
                 {wishlist.length > 0 && (
@@ -732,14 +740,14 @@ export default function TopBar() {
                     {wishlist.map((item, index) => (
                       <motion.div
                         key={item.id}
-                        className="flex gap-3 sm:gap-4 p-3 sm:p-4 border rounded hover:shadow-md transition"
+                        className="flex gap-3 sm:gap-4  border-b border-gray-200 pb-6"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ delay: index * 0.05 }}
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="w-20 h-20 sm:w-34 sm:h-24 bg-gray-100 rounded flex-shrink-0">
+                        <div className="w-20 h-20 sm:w-34 sm:h-24 ">
                           <img
                             src={item.image}
                             alt={item.title}
@@ -784,7 +792,7 @@ export default function TopBar() {
                                 onClick={() =>
                                   handleAddToCartFromWishlist(item, size)
                                 }
-                                className="px-2 sm:px-3 py-1 text-xs border rounded hover:bg-black hover:text-white transition"
+                                className="px-2 sm:px-3 py-1 text-xs border rounded-xl hover:bg-black hover:text-white transition"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
@@ -798,7 +806,7 @@ export default function TopBar() {
                               handleAddToCartFromWishlist(item, item.sizes[0]);
                               setIsWishlistOpen(false);
                             }}
-                            className="w-full bg-black text-white text-xs py-2 rounded hover:bg-gray-800 transition"
+                            className="w-full bg-black text-white text-xs py-3 rounded hover:bg-gray-800 transition"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
@@ -814,7 +822,7 @@ export default function TopBar() {
 
             {wishlist.length > 0 && (
               <motion.div
-                className="border-t bg-white p-4 sm:p-6"
+                className="border-t border-gray-200 bg-white p-4 sm:p-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}

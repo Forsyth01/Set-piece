@@ -1,13 +1,20 @@
 import ProductSwiper from "../ProductSwiper";
 import ProductCard from "../product/ProductCard";
-import { theVault } from "../../lib/mock-the-vault";
+import { getCollectionByHandle } from "@/app/lib/shopify/api";
 
-export default function TheVault() {
+export default async function TheVault() {
+  const collection = await getCollectionByHandle("the-vault", 8);
+  const products = collection?.products || [];
+
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <ProductSwiper
       eyebrow="SETPIECE"
       title="THE VAULT"
-      products={theVault}
+      products={products}
       ProductCard={ProductCard}
       viewAllText="Want more of this?"
       viewAllHref="/collections/the-vault"

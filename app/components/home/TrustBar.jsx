@@ -29,8 +29,8 @@ export default function TrustBar() {
           viewport={{ once: true, margin: "-100px" }}
         >
           <Value title="100%" subtitle="AUTHENTIC" index={0} />
-          <Value title="XL–3XL" subtitle="SIZE RANGE" index={1} />
-          <Value title="US" subtitle="SHIPPING" index={2} />
+          <Value title="S–3XL" subtitle="SIZE RANGE" index={1} />
+          {/* <Value title="US" subtitle="SHIPPING" index={2} /> */}
         </motion.div>
 
         {/* Scroll Indicator – CENTERED */}
