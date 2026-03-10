@@ -93,7 +93,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/collections/caps" className="text-gray-400 text-sm hover:text-white transition">
+                <Link href="/collections/caps-1" className="text-gray-400 text-sm hover:text-white transition">
                   Caps
                 </Link>
               </li>

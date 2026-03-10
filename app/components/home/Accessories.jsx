@@ -3,7 +3,8 @@ import ProductCard from "../product/ProductCard";
 import { getCollectionByHandle } from "@/app/lib/shopify/api";
 
 export default async function Accessories() {
-  const collection = await getCollectionByHandle("caps", 8);
+  // TODO: Change to "caps" after fixing Shopify collection handles
+  const collection = await getCollectionByHandle("caps-1", 8);
   const products = collection?.products || [];
 
   if (products.length === 0) {
@@ -17,7 +18,7 @@ export default async function Accessories() {
       products={products}
       ProductCard={ProductCard}
       viewAllText="Want more of this?"
-      viewAllHref="/collections/caps"
+      viewAllHref="/collections/caps-1"
     />
   );
 }
