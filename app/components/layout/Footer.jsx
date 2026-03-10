@@ -144,6 +144,11 @@ export default function Footer() {
                   Track Order
                 </Link>
               </li>
+              <li>
+                <Link href="/wishlist" className="text-gray-400 text-sm hover:text-white transition">
+                  My Wishlist
+                </Link>
+              </li>
             </ul>
           </div>
 

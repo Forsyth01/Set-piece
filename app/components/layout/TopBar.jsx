@@ -49,6 +49,7 @@ export default function TopBar() {
   ];
 
   const supportLinks = [
+    { name: "My Wishlist", href: "/wishlist", icon: Heart },
     { name: "Contact Us", href: "/contact", icon: Mail },
     { name: "FAQ", href: "/faq", icon: HelpCircle },
   ];
@@ -864,11 +865,18 @@ export default function TopBar() {
 
             {wishlist.length > 0 && (
               <motion.div
-                className="border-t border-gray-200 bg-white p-4 sm:p-6"
+                className="border-t border-gray-200 bg-white p-4 sm:p-6 space-y-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
+                <Link
+                  href="/wishlist"
+                  onClick={() => setIsWishlistOpen(false)}
+                  className="block w-full bg-black text-white py-3 rounded-full font-medium text-center hover:bg-gray-800 transition"
+                >
+                  VIEW FULL WISHLIST
+                </Link>
                 <button
                   onClick={() => setIsWishlistOpen(false)}
                   className="w-full text-center text-sm text-gray-600 hover:text-black underline"
