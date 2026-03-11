@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
-import { Heart, Loader2, Minus, Plus, ChevronRight, Truck, RotateCcw, Shield, Check } from "lucide-react";
+import { Heart, Loader2, Minus, Plus, Check, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWishlist } from "@/app/context/WishlistContext";
 import RecommendedSection from "@/app/components/RecommendedSection";
@@ -12,9 +12,8 @@ export default function ProductClient({ product, recommendations = [] }) {
   // Auto-select first size
   const sizes = product.sizes || [];
   const [selectedSize, setSelectedSize] = useState(sizes[0] || "");
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { addToCart, isLoading } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -38,6 +37,9 @@ export default function ProductClient({ product, recommendations = [] }) {
   const discountPercent = currentCompareAtPrice
     ? Math.round((1 - currentPrice / currentCompareAtPrice) * 100)
     : null;
+
+  // Check if selected variant is out of stock
+  const isOutOfStock = selectedVariant?.availableForSale === false;
 
   // Get all product images
   const productImages = product.images?.length > 0
@@ -73,13 +75,43 @@ export default function ProductClient({ product, recommendations = [] }) {
 
           {/* Left Side - Product Images */}
           <motion.div
-            className="space-y-4"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
+            className="flex gap-3"
           >
+            {/* Thumbnails - Side */}
+            {productImages.length > 1 && (
+              <div className="flex flex-col gap-2 w-20 shrink-0">
+                {productImages.map((img, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`relative aspect-square rounded-lg overflow-hidden transition-all duration-300 ${
+                      selectedImageIndex === index
+                        ? "ring-2 ring-black"
+                        : "ring-1 ring-gray-200 hover:ring-gray-400"
+                    }`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <img
+                      src={img}
+                      alt={`${product.title} - View ${index + 1}`}
+                      className={`w-full h-full object-cover transition-opacity duration-300 ${
+                        selectedImageIndex === index ? "opacity-100" : "opacity-70 hover:opacity-100"
+                      }`}
+                    />
+                  </motion.button>
+                ))}
+              </div>
+            )}
+
             {/* Main Image */}
-            <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden">
+            <div className="relative flex-1 bg-gray-50 rounded-2xl overflow-hidden aspect-square">
               {/* Badges */}
               <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
                 {product.isNew && (
@@ -95,53 +127,33 @@ export default function ProductClient({ product, recommendations = [] }) {
               </div>
 
               {/* Wishlist Button */}
-              <button
+              <motion.button
                 onClick={() => toggleWishlist(product)}
                 className={`absolute top-4 right-4 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
                   inWishlist
                     ? "bg-red-50 text-red-500"
                     : "bg-white/90 backdrop-blur-sm text-gray-600 hover:text-red-500"
                 }`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <Heart size={22} className={inWishlist ? "fill-red-500" : ""} />
-              </button>
+              </motion.button>
 
+              {/* Main Image with Animation */}
               <AnimatePresence mode="wait">
                 <motion.img
                   key={selectedImageIndex}
-                  src={productImages[selectedImageIndex] || "/placeholder.jpg"}
-                  alt={product.title}
+                  src={productImages[selectedImageIndex]}
+                  alt={`${product.title} - Main`}
                   className="w-full h-full object-cover"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
                 />
               </AnimatePresence>
             </div>
-
-            {/* Thumbnail Gallery */}
-            {productImages.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {productImages.map((img, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImageIndex(index)}
-                    className={`shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-                      selectedImageIndex === index
-                        ? "border-black"
-                        : "border-transparent hover:border-gray-300"
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`${product.title} - View ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
           </motion.div>
 
           {/* Right Side - Product Details */}
@@ -200,32 +212,28 @@ export default function ProductClient({ product, recommendations = [] }) {
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   {product.sizes.map((size) => {
                     const variant = product.variants?.find(v => v.size === size);
-                    const isOutOfStock = variant?.availableForSale === false;
+                    const sizeOutOfStock = variant?.availableForSale === false;
 
                     return (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
+                        disabled={sizeOutOfStock}
                         className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all duration-200 relative ${
-                          selectedSize === size
-                            ? "border-black bg-black text-white"
-                            : "border-gray-200 hover:border-black bg-white text-gray-900"
+                          sizeOutOfStock
+                            ? "border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed line-through"
+                            : selectedSize === size
+                              ? "border-black bg-black text-white"
+                              : "border-gray-200 hover:border-black bg-white text-gray-900"
                         }`}
                       >
                         {size}
-                     
                       </button>
                     );
                   })}
                 </div>
 
 
-                {/* Out of stock warning */}
-                {selectedSize && product.variants?.find(v => v.size === selectedSize)?.availableForSale === false && (
-                  <p className="text-sm text-red-500 mt-2 flex items-center gap-1">
-                    <span>⚠</span> This size is currently out of stock
-                  </p>
-                )}
               </div>
             )}
 
@@ -272,21 +280,23 @@ export default function ProductClient({ product, recommendations = [] }) {
             {/* Add to Cart Button */}
             <motion.button
               onClick={handleAddToCart}
-              disabled={isLoading || !selectedSize}
+              disabled={isLoading || !selectedSize || isOutOfStock}
               className={`w-full py-4 rounded-xl font-bold text-base tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
-                !selectedSize
+                !selectedSize || isOutOfStock
                   ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : isLoading
                     ? "bg-gray-800 text-white"
                     : "bg-black text-white hover:bg-gray-800 active:scale-[0.98]"
               }`}
-              whileTap={!isLoading && selectedSize ? { scale: 0.98 } : {}}
+              whileTap={!isLoading && selectedSize && !isOutOfStock ? { scale: 0.98 } : {}}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
                   ADDING TO CART...
                 </>
+              ) : isOutOfStock ? (
+                "OUT OF STOCK"
               ) : !selectedSize ? (
                 "SELECT A SIZE"
               ) : (
@@ -313,15 +323,17 @@ export default function ProductClient({ product, recommendations = [] }) {
           </div>
           <button
             onClick={handleAddToCart}
-            disabled={isLoading || !selectedSize}
+            disabled={isLoading || !selectedSize || isOutOfStock}
             className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
-              !selectedSize
+              !selectedSize || isOutOfStock
                 ? "bg-gray-200 text-gray-400"
                 : "bg-black text-white active:scale-[0.98]"
             }`}
           >
             {isLoading ? (
               <Loader2 className="animate-spin" size={18} />
+            ) : isOutOfStock ? (
+              "Out of Stock"
             ) : !selectedSize ? (
               "Select Size"
             ) : (

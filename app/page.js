@@ -6,9 +6,10 @@ import HoodiesJoggers from "./components/home/HoodiesJoggers";
 import NewArrivals from "./components/home/NewArrivals";
 import Newsletter from "./components/home/Newsletter";
 import SoccerShorts from "./components/home/SoccerShorts";
-import TheVault from "./components/home/TheVault";
+import TheVault from "./components/home/Caps";
 import TrendingCollections from "./components/home/TrendingCollections";
 import TrustBar from "./components/home/TrustBar";
+import Caps from "./components/home/Caps";
 
 // Loading skeleton for product sections
 function ProductSectionSkeleton() {
@@ -54,7 +55,7 @@ export default function Home() {
       </Suspense>
 
       <Suspense fallback={<ProductSectionSkeleton />}>
-        <TheVault />
+        <Caps/>
       </Suspense>
 
       <Suspense fallback={<ProductSectionSkeleton />}>

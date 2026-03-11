@@ -304,7 +304,7 @@ export default function TopBar() {
           <motion.button
             data-cart-button
             onClick={() => setIsCartOpen(true)}
-            className="relative cursor-pointer hover:text-gray-600 transition"
+            className="relative cursor-pointer hover:text-gray-600 transition mr-2 sm:mr-0"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -513,7 +513,7 @@ export default function TopBar() {
             <div className="flex-1 overflow-y-auto">
               {cart.length === 0 ? (
                 <motion.div 
-                  className="flex flex-col items-center justify-center h-full p-8 text-center"
+                  className="flex flex-col items-center justify-center h-full p-8 text-center "
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}

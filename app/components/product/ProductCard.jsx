@@ -29,6 +29,9 @@ export default function ProductCard({ product, index = 0 }) {
   const currentPrice = selectedVariant?.price || product.price || 0;
   const currentCompareAtPrice = selectedVariant?.compareAtPrice || product.compareAtPrice;
 
+  // Check if selected variant is out of stock
+  const isOutOfStock = selectedVariant?.availableForSale === false;
+
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
 
@@ -50,6 +53,9 @@ export default function ProductCard({ product, index = 0 }) {
 
   const handleAddToCart = () => {
     if (sizes.length > 0 && !selectedSize) {
+      return;
+    }
+    if (isOutOfStock) {
       return;
     }
     addToCart(product, selectedSize);
@@ -114,15 +120,17 @@ export default function ProductCard({ product, index = 0 }) {
         <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
           <button
             onClick={handleAddToCart}
-            disabled={sizes.length > 0 && !selectedSize}
+            disabled={(sizes.length > 0 && !selectedSize) || isOutOfStock}
             className={`w-full cursor-pointer flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.98] ${
-              sizes.length > 0 && !selectedSize
-                ? "bg-white/80 text-gray-400 cursor-not-allowed"
-                : "bg-white text-black hover:bg-gray-100"
+              isOutOfStock
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : sizes.length > 0 && !selectedSize
+                  ? "bg-white/80 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-black hover:bg-gray-100"
             }`}
           >
             <ShoppingBag size={16} />
-            {sizes.length > 0 && !selectedSize ? "SELECT SIZE" : "ADD TO CART"}
+            {isOutOfStock ? "OUT OF STOCK" : sizes.length > 0 && !selectedSize ? "SELECT SIZE" : "ADD TO CART"}
           </button>
         </div>
       </div>
@@ -132,19 +140,27 @@ export default function ProductCard({ product, index = 0 }) {
         {/* Sizes - Clickable */}
         {sizes.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                className={`text-[11px] px-2 py-1 rounded-md border transition-all duration-200 cursor-pointer ${
-                  selectedSize === size
-                    ? "bg-black text-white border-black"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-black"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+            {sizes.map((size) => {
+              const variant = product.variants?.find(v => v.size === size);
+              const sizeOutOfStock = variant?.availableForSale === false;
+
+              return (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  disabled={sizeOutOfStock}
+                  className={`text-[11px] px-2 py-1 rounded-md border transition-all duration-200 ${
+                    sizeOutOfStock
+                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed line-through"
+                      : selectedSize === size
+                        ? "bg-black text-white border-black cursor-pointer"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-black cursor-pointer"
+                  }`}
+                >
+                  {size}
+                </button>
+              );
+            })}
           </div>
         )}
 
