@@ -50,7 +50,7 @@ export default function TopBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Customer accounts URL (Shopify's new customer accounts)
+  // Shopify customer accounts URL (direct paths work!)
   const customerAccountsUrl = "https://accounts.setpiecesclothing.com";
 
   // Navigation links for mobile menu
@@ -65,7 +65,7 @@ export default function TopBar() {
   ];
 
   const supportLinks = [
-    { name: "Sign In", href: customerAccountsUrl, icon: User, external: true },
+    { name: "Sign In", href: `${customerAccountsUrl}/profile`, icon: User, external: true },
     { name: "My Orders", href: `${customerAccountsUrl}/orders`, icon: Package, external: true },
     { name: "My Wishlist", href: "/wishlist", icon: Heart },
     { name: "Contact Us", href: "/contact", icon: Mail },
@@ -366,20 +366,12 @@ export default function TopBar() {
                 >
                   <div className="p-2">
                     <a
-                      href={customerAccountsUrl}
+                      href={`${customerAccountsUrl}/profile`}
                       className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
                       onClick={() => setIsAccountDropdownOpen(false)}
                     >
                       <User size={18} />
-                      <span className="font-medium">Sign In</span>
-                    </a>
-                    <a
-                      href={customerAccountsUrl}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                      onClick={() => setIsAccountDropdownOpen(false)}
-                    >
-                      <User size={18} />
-                      <span className="font-medium">Create Account</span>
+                      <span className="font-medium">My Account</span>
                     </a>
                   </div>
                   <div className="border-t border-gray-100 p-2">
