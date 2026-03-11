@@ -35,7 +35,23 @@ export default function TopBar() {
   const [showClearWishlistModal, setShowClearWishlistModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const accountDropdownRef = useRef(null);
   const router = useRouter();
+
+  // Close account dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (accountDropdownRef.current && !accountDropdownRef.current.contains(e.target)) {
+        setIsAccountDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Customer accounts URL (Shopify's new customer accounts)
+  const customerAccountsUrl = "https://accounts.setpiecesclothing.com";
 
   // Navigation links for mobile menu
   const navLinks = [
@@ -49,6 +65,8 @@ export default function TopBar() {
   ];
 
   const supportLinks = [
+    { name: "Sign In", href: customerAccountsUrl, icon: User, external: true },
+    { name: "My Orders", href: `${customerAccountsUrl}/orders`, icon: Package, external: true },
     { name: "My Wishlist", href: "/wishlist", icon: Heart },
     { name: "Contact Us", href: "/contact", icon: Mail },
     { name: "FAQ", href: "/faq", icon: HelpCircle },
@@ -324,13 +342,78 @@ export default function TopBar() {
             </AnimatePresence>
           </motion.button>
 
-          {/* <motion.button 
-            className="cursor-pointer hover:text-gray-600 transition"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <User size={22} />
-          </motion.button> */}
+          {/* Account Button with Dropdown */}
+          <div className="relative hidden sm:block" ref={accountDropdownRef}>
+            <motion.button
+              onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
+              className="cursor-pointer hover:text-gray-600 transition"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              title="My Account"
+            >
+              <User size={22} />
+            </motion.button>
+
+            {/* Account Dropdown */}
+            <AnimatePresence>
+              {isAccountDropdownOpen && (
+                <motion.div
+                  className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <div className="p-2">
+                    <a
+                      href={customerAccountsUrl}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <User size={18} />
+                      <span className="font-medium">Sign In</span>
+                    </a>
+                    <a
+                      href={customerAccountsUrl}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <User size={18} />
+                      <span className="font-medium">Create Account</span>
+                    </a>
+                  </div>
+                  <div className="border-t border-gray-100 p-2">
+                    <a
+                      href={`${customerAccountsUrl}/orders`}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <Package size={18} />
+                      <span className="font-medium">My Orders</span>
+                    </a>
+                    <Link
+                      href="/wishlist"
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <Heart size={18} />
+                      <span className="font-medium">My Wishlist</span>
+                    </Link>
+                  </div>
+                  <div className="border-t border-gray-100 p-2">
+                    <Link
+                      href="/contact"
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <HelpCircle size={18} />
+                      <span className="font-medium">Help & Support</span>
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </motion.div>
 
@@ -982,28 +1065,35 @@ export default function TopBar() {
                   </span>
                 </div>
                 <nav className="space-y-1 px-2">
-                  {supportLinks.map((link, index) => (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: (navLinks.length + index) * 0.05 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
+                  {supportLinks.map((link, index) => {
+                    const LinkComponent = link.external ? 'a' : Link;
+                    const linkProps = link.external
+                      ? { href: link.href, target: "_blank", rel: "noopener noreferrer" }
+                      : { href: link.href };
+
+                    return (
+                      <motion.div
+                        key={link.href}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: (navLinks.length + index) * 0.05 }}
                       >
-                        <div className="flex items-center gap-3">
-                          <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
-                          <span className="font-medium text-gray-700 group-hover:text-black transition">
-                            {link.name}
-                          </span>
-                        </div>
-                        <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
-                      </Link>
-                    </motion.div>
-                  ))}
+                        <LinkComponent
+                          {...linkProps}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
+                            <span className="font-medium text-gray-700 group-hover:text-black transition">
+                              {link.name}
+                            </span>
+                          </div>
+                          <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                        </LinkComponent>
+                      </motion.div>
+                    );
+                  })}
                 </nav>
               </div>
 
