@@ -751,7 +751,7 @@ export default function TopBar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex justify-between items-center mb-2 py-2">
                   <span className="text-gray-600 font-medium">Subtotal:</span>
                   <span className="text-2xl font-bold">${getTotalPrice().toFixed(2)}</span>
                 </div>
