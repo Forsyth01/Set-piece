@@ -2,6 +2,7 @@ import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header/Header";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 
 import "./globals.css";
@@ -22,43 +23,45 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-white text-gray-900 antialiased">
-        <CartProvider>
-          <WishlistProvider>
-            <Header />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-            
-            {/* Toast Notifications */}
-            <Toaster 
-              position="bottom-center"
-              reverseOrder={false}
-              toastOptions={{
-                duration: 2500,
-                style: {
-                  background: '#1a1a1a',
-                  color: '#fff',
-                  padding: '12px 20px',
-                  borderRadius: '50px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
-                  minWidth: '250px',
-                  textAlign: 'center',
-                },
-                success: {
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Header />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
+
+              {/* Toast Notifications */}
+              <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+                toastOptions={{
+                  duration: 2500,
                   style: {
-                    background: '#000',
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    padding: '12px 20px',
+                    borderRadius: '50px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                    minWidth: '250px',
+                    textAlign: 'center',
                   },
-                },
-                error: {
-                  style: {
-                    background: '#dc2626',
+                  success: {
+                    style: {
+                      background: '#000',
+                    },
                   },
-                },
-              }}
-            />
-          </WishlistProvider>
-        </CartProvider>
+                  error: {
+                    style: {
+                      background: '#dc2626',
+                    },
+                  },
+                }}
+              />
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

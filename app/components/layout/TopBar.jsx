@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/app/context/CartContext";
 import { useWishlist } from "@/app/context/WishlistContext";
+import { useAuth } from "@/app/context/AuthContext";
 import {
   Search,
   Heart,
@@ -22,6 +23,7 @@ import {
   Package,
   Mail,
   HelpCircle,
+  LogOut,
 } from "lucide-react";
 import { searchProducts } from "@/app/lib/shopify/api";
 
@@ -38,6 +40,7 @@ export default function TopBar() {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const accountDropdownRef = useRef(null);
   const router = useRouter();
+  const { customer, isAuthenticated, logout } = useAuth();
 
   // Close account dropdown when clicking outside
   useEffect(() => {
@@ -50,9 +53,6 @@ export default function TopBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Shopify customer accounts URL (direct paths work!)
-  const customerAccountsUrl = "https://accounts.setpiecesclothing.com";
-
   // Navigation links for mobile menu
   const navLinks = [
     { name: "Home", href: "/", icon: Home },
@@ -64,13 +64,28 @@ export default function TopBar() {
     { name: "Sweatpants", href: "/collections/sweatpants", icon: Package },
   ];
 
-  const supportLinks = [
-    { name: "Sign In", href: `${customerAccountsUrl}/profile`, icon: User, external: true },
-    { name: "My Orders", href: `${customerAccountsUrl}/orders`, icon: Package, external: true },
-    { name: "My Wishlist", href: "/wishlist", icon: Heart },
-    { name: "Contact Us", href: "/contact", icon: Mail },
-    { name: "FAQ", href: "/faq", icon: HelpCircle },
-  ];
+  // Dynamic support links based on auth state
+  const supportLinks = isAuthenticated
+    ? [
+        { name: "My Account", href: "/account", icon: User },
+        { name: "My Orders", href: "/account", icon: Package },
+        { name: "My Wishlist", href: "/wishlist", icon: Heart },
+        { name: "Contact Us", href: "/contact", icon: Mail },
+        { name: "FAQ", href: "/faq", icon: HelpCircle },
+      ]
+    : [
+        { name: "Sign In", href: "/account/login", icon: User },
+        { name: "Create Account", href: "/account/register", icon: User },
+        { name: "My Wishlist", href: "/wishlist", icon: Heart },
+        { name: "Contact Us", href: "/contact", icon: Mail },
+        { name: "FAQ", href: "/faq", icon: HelpCircle },
+      ];
+
+  const handleLogout = async () => {
+    setIsAccountDropdownOpen(false);
+    await logout();
+    router.push("/");
+  };
 
   const handleMobileSearch = (e) => {
     e.preventDefault();
@@ -96,7 +111,6 @@ export default function TopBar() {
   const cartItemCount = getTotalItems();
   const wishlistItemCount = getTotalWishlistItems();
   const searchRef = useRef(null);
-  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -116,15 +130,12 @@ export default function TopBar() {
     }
 
     const timeoutId = setTimeout(async () => {
-      setIsSearching(true);
       try {
         const results = await searchProducts(query, 5);
         setSuggestions(results);
       } catch (error) {
         console.error("Search error:", error);
         setSuggestions([]);
-      } finally {
-        setIsSearching(false);
       }
     }, 300);
 
@@ -307,14 +318,11 @@ export default function TopBar() {
             <AnimatePresence>
               {wishlistItemCount > 0 && (
                 <motion.span
-                  className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-semibold"
+                  className="absolute -top-0.5 -right-0.5 bg-red-500 w-2.5 h-2.5 rounded-full"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  key={wishlistItemCount}
-                >
-                  {wishlistItemCount}
-                </motion.span>
+                />
               )}
             </AnimatePresence>
           </motion.button>
@@ -330,14 +338,11 @@ export default function TopBar() {
             <AnimatePresence>
               {cartItemCount > 0 && (
                 <motion.span
-                  className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-semibold"
+                  className="absolute -top-0.5 -right-0.5 bg-red-500 w-2.5 h-2.5 rounded-full"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  key={cartItemCount}
-                >
-                  {cartItemCount}
-                </motion.span>
+                />
               )}
             </AnimatePresence>
           </motion.button>
@@ -364,44 +369,93 @@ export default function TopBar() {
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
                 >
-                  <div className="p-2">
-                    <a
-                      href={`${customerAccountsUrl}/profile`}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                      onClick={() => setIsAccountDropdownOpen(false)}
-                    >
-                      <User size={18} />
-                      <span className="font-medium">My Account</span>
-                    </a>
-                  </div>
-                  <div className="border-t border-gray-100 p-2">
-                    <a
-                      href={`${customerAccountsUrl}/orders`}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                      onClick={() => setIsAccountDropdownOpen(false)}
-                    >
-                      <Package size={18} />
-                      <span className="font-medium">My Orders</span>
-                    </a>
-                    <Link
-                      href="/wishlist"
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                      onClick={() => setIsAccountDropdownOpen(false)}
-                    >
-                      <Heart size={18} />
-                      <span className="font-medium">My Wishlist</span>
-                    </Link>
-                  </div>
-                  <div className="border-t border-gray-100 p-2">
-                    <Link
-                      href="/contact"
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                      onClick={() => setIsAccountDropdownOpen(false)}
-                    >
-                      <HelpCircle size={18} />
-                      <span className="font-medium">Help & Support</span>
-                    </Link>
-                  </div>
+                  {isAuthenticated ? (
+                    <>
+                      {/* Logged in user header */}
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="font-semibold text-gray-900">
+                          {customer?.firstName || "Welcome"}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {customer?.email}
+                        </p>
+                      </div>
+                      <div className="p-2">
+                        <Link
+                          href="/account"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <User size={18} />
+                          <span className="font-medium">My Account</span>
+                        </Link>
+                        <Link
+                          href="/account"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <Package size={18} />
+                          <span className="font-medium">My Orders</span>
+                        </Link>
+                        <Link
+                          href="/wishlist"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <Heart size={18} />
+                          <span className="font-medium">My Wishlist</span>
+                        </Link>
+                      </div>
+                      <div className="border-t border-gray-100 p-2">
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition text-gray-700 hover:text-red-600"
+                        >
+                          <LogOut size={18} />
+                          <span className="font-medium">Sign Out</span>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="p-2">
+                        <Link
+                          href="/account/login"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <User size={18} />
+                          <span className="font-medium">Sign In</span>
+                        </Link>
+                        <Link
+                          href="/account/register"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <User size={18} />
+                          <span className="font-medium">Create Account</span>
+                        </Link>
+                      </div>
+                      <div className="border-t border-gray-100 p-2">
+                        <Link
+                          href="/wishlist"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <Heart size={18} />
+                          <span className="font-medium">My Wishlist</span>
+                        </Link>
+                        <Link
+                          href="/contact"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                          onClick={() => setIsAccountDropdownOpen(false)}
+                        >
+                          <HelpCircle size={18} />
+                          <span className="font-medium">Help & Support</span>
+                        </Link>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -675,72 +729,12 @@ export default function TopBar() {
                               whileTap={{ scale: 0.95 }}
                             >
                               <Trash2 size={16} />
-                              {/* Remove */}
                             </motion.button>
                           </div>
                         </div>
                       </motion.div>
                     ))}
                   </AnimatePresence>
-
-                  {/* <motion.div 
-                    className="pt-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <h3 className="font-bold text-center mb-4">
-                      YOU MIGHT ALSO LIKE
-                    </h3>
-                    <div className="space-y-4">
-                      {recommendations.map((product, index) => (
-                        <motion.div
-                          key={product.id}
-                          className="flex gap-4 p-4 border rounded hover:shadow-md transition"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 + index * 0.1 }}
-                          whileHover={{ scale: 1.02 }}
-                        >
-                          <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0 relative">
-                            <span className="absolute top-0 left-0 bg-red-600 text-white text-xs px-2 py-1 rounded-br">
-                              New
-                            </span>
-                            <img
-                              src={product.image}
-                              alt={product.title}
-                              className="w-full h-full object-contain p-1"
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-bold text-sm mb-1">
-                              {product.title}
-                            </h4>
-                            <p className="text-sm font-bold mb-2">
-                              ${product.price.toFixed(2)}
-                            </p>
-                            <div className="lg:flex grid grid-cols-4 gap-2 text-xs mb-2">
-                              {product.sizes?.map((size) => (
-                                <button
-                                  key={size}
-                                  className="px-2 py-1 border rounded hover:bg-gray-100"
-                                >
-                                  {size}
-                                </button>
-                              ))}
-                            </div>
-                            <Link
-                              href={`/products/${product.handle}`}
-                              onClick={() => setIsCartOpen(false)}
-                              className="block w-full bg-black text-white text-xs py-2 rounded hover:bg-gray-800 transition text-center"
-                            >
-                              VIEW PRODUCT
-                            </Link>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div> */}
                 </div>
               )}
             </div>
@@ -774,14 +768,6 @@ export default function TopBar() {
                     "PROCEED TO CHECKOUT"
                   )}
                 </button>
-
-                {/* <Link
-                  href="/cart"
-                  onClick={() => setIsCartOpen(false)}
-                  className="block w-full bg-white text-black border-2 border-black py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition text-center"
-                >
-                  VIEW FULL CART
-                </Link> */}
 
                 <button
                   onClick={() => setIsCartOpen(false)}
@@ -1057,35 +1043,50 @@ export default function TopBar() {
                   </span>
                 </div>
                 <nav className="space-y-1 px-2">
-                  {supportLinks.map((link, index) => {
-                    const LinkComponent = link.external ? 'a' : Link;
-                    const linkProps = link.external
-                      ? { href: link.href, target: "_blank", rel: "noopener noreferrer" }
-                      : { href: link.href };
-
-                    return (
-                      <motion.div
-                        key={link.href}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: (navLinks.length + index) * 0.05 }}
+                  {supportLinks.map((link, index) => (
+                    <motion.div
+                      key={link.href + link.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (navLinks.length + index) * 0.05 }}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
                       >
-                        <LinkComponent
-                          {...linkProps}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
-                            <span className="font-medium text-gray-700 group-hover:text-black transition">
-                              {link.name}
-                            </span>
-                          </div>
-                          <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
-                        </LinkComponent>
-                      </motion.div>
-                    );
-                  })}
+                        <div className="flex items-center gap-3">
+                          <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
+                          <span className="font-medium text-gray-700 group-hover:text-black transition">
+                            {link.name}
+                          </span>
+                        </div>
+                        <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    </motion.div>
+                  ))}
+                  {isAuthenticated && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (navLinks.length + supportLinks.length) * 0.05 }}
+                    >
+                      <button
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-red-50 transition group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <LogOut size={20} className="text-gray-400 group-hover:text-red-600 transition" />
+                          <span className="font-medium text-gray-700 group-hover:text-red-600 transition">
+                            Sign Out
+                          </span>
+                        </div>
+                      </button>
+                    </motion.div>
+                  )}
                 </nav>
               </div>
 
@@ -1104,9 +1105,7 @@ export default function TopBar() {
                     <Heart size={20} />
                     <span className="text-sm font-medium">Wishlist</span>
                     {wishlistItemCount > 0 && (
-                      <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                        {wishlistItemCount}
-                      </span>
+                      <span className="bg-red-500 w-2 h-2 rounded-full" />
                     )}
                   </motion.button>
                   <motion.button
@@ -1120,9 +1119,7 @@ export default function TopBar() {
                     <ShoppingBag size={20} />
                     <span className="text-sm font-medium">Cart</span>
                     {cartItemCount > 0 && (
-                      <span className="bg-white text-black text-xs px-2 py-0.5 rounded-full">
-                        {cartItemCount}
-                      </span>
+                      <span className="bg-white w-2 h-2 rounded-full" />
                     )}
                   </motion.button>
                 </div>

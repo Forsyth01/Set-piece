@@ -2,11 +2,11 @@
 
 import { Heart, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
 import { useWishlist } from "@/app/context/WishlistContext";
 
-export default function ProductCard({ product, index = 0 }) {
+export default function ProductCard({ product }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -32,25 +32,6 @@ export default function ProductCard({ product, index = 0 }) {
   // Check if selected variant is out of stock
   const isOutOfStock = selectedVariant?.availableForSale === false;
 
-  const [isVisible, setIsVisible] = useState(false);
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1, rootMargin: "50px" }
-    );
-
-    if (cardRef.current) observer.observe(cardRef.current);
-    return () => {
-      if (cardRef.current) observer.unobserve(cardRef.current);
-    };
-  }, []);
-
   const handleAddToCart = () => {
     if (sizes.length > 0 && !selectedSize) {
       return;
@@ -69,13 +50,7 @@ export default function ProductCard({ product, index = 0 }) {
     : null;
 
   return (
-    <div
-      ref={cardRef}
-      className={`group relative flex flex-col h-full transition-all duration-700 ease-out ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-      }`}
-      style={{ transitionDelay: `${index * 100}ms` }}
-    >
+    <div className="group relative flex flex-col h-full">
       {/* Image Container */}
       <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100">
         {/* Badges */}
