@@ -296,7 +296,7 @@ export default function TopBar() {
           <motion.button
             data-wishlist-button
             onClick={() => setIsWishlistOpen(true)}
-            className="relative cursor-pointer hover:text-gray-600 transition hidden sm:block"
+            className="relative cursor-pointer hover:text-gray-600 transition "
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
