@@ -59,7 +59,7 @@ export default function TopBar() {
     { name: "Home", href: "/", icon: Home },
     { name: "Shorts", href: "/collections/shorts", icon: Package },
     { name: "Jerseys", href: "/collections/jerseys", icon: Package },
-    { name: "Caps", href: "/collections/caps-1", icon: Package },
+    { name: "Caps", href: "/collections/caps", icon: Package },
     { name: "Hoodies", href: "/collections/hoodie", icon: Package },
     { name: "Sweatshirts", href: "/collections/sweatshirts", icon: Package },
     { name: "Sweatpants", href: "/collections/sweatpants", icon: Package },
