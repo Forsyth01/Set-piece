@@ -337,7 +337,7 @@ export default function TopBar() {
           {/* Account Button - Mobile (no dropdown) */}
           <Link
             href="/account"
-            className="cursor-pointer hover:text-gray-600 transition sm:hidden"
+            className="cursor-pointer hover:text-gray-600 transition hidden"
           >
             <User size={22} />
           </Link>
