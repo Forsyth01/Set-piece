@@ -856,13 +856,11 @@ export default function TopBar() {
                         transition={{ delay: index * 0.05 }}
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="relative w-20 h-20 sm:w-24 sm:h-24">
-                          <Image
+                        <div className="w-20 h-20 sm:w-34 sm:h-24 ">
+                          <img
                             src={item.image}
                             alt={item.title}
-                            fill
-                            sizes="(max-width: 640px) 80px, 96px"
-                            className="object-contain p-1 sm:p-2"
+                            className="w-full h-full object-contain p-1 sm:p-2"
                           />
                         </div>
 
@@ -963,7 +961,7 @@ export default function TopBar() {
           <>
             {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-200 md:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
