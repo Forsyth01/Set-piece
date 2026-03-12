@@ -1,37 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useCart } from "@/app/context/CartContext";
 import { Heart, Loader2, Minus, Plus, Check, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useWishlist } from "@/app/context/WishlistContext";
 import RecommendedSection from "@/app/components/RecommendedSection";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProductClient({ product, recommendations = [] }) {
   // Auto-select first size
-  const sizes = product.sizes || [];
+  const sizes = useMemo(() => product.sizes || [], [product.sizes]);
   const [selectedSize, setSelectedSize] = useState(sizes[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { addToCart, isLoading } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
+  // Create variant map for fast lookup
+  const variantMap = useMemo(() => {
+    const map = new Map();
+    product.variants?.forEach((v) => map.set(v.size, v));
+    return map;
+  }, [product.variants]);
+
   // Auto-select first size when product loads
   useEffect(() => {
     if (sizes.length > 0 && !selectedSize) {
       setSelectedSize(sizes[0]);
     }
-  }, [sizes.length]);
+  }, [sizes]);
 
-  // Find the selected variant to get its price
-  const selectedVariant = selectedSize
-    ? product.variants?.find((v) => v.size === selectedSize)
-    : product.variants?.[0];
+  // Find the selected variant using the map
+  const selectedVariant = useMemo(() => {
+    return selectedSize ? variantMap.get(selectedSize) : product.variants?.[0];
+  }, [selectedSize, variantMap, product.variants]);
 
   // Use variant price if available, otherwise use product base price
   const currentPrice = selectedVariant?.price || product.price || 0;
-  const currentCompareAtPrice = selectedVariant?.compareAtPrice || product.compareAtPrice;
+  const currentCompareAtPrice =
+    selectedVariant?.compareAtPrice || product.compareAtPrice;
 
   // Calculate discount
   const discountPercent = currentCompareAtPrice
@@ -42,9 +50,11 @@ export default function ProductClient({ product, recommendations = [] }) {
   const isOutOfStock = selectedVariant?.availableForSale === false;
 
   // Get all product images
-  const productImages = product.images?.length > 0
-    ? product.images.map(img => img.url)
-    : [product.image];
+  const productImages = useMemo(() => {
+    return product.images?.length > 0
+      ? product.images.map((img) => img.url)
+      : [product.image];
+  }, [product.images, product.image]);
 
   const handleAddToCart = async () => {
     if (product && selectedSize && !isLoading) {
@@ -54,17 +64,21 @@ export default function ProductClient({ product, recommendations = [] }) {
 
   const inWishlist = isInWishlist(product.id);
 
-  const incrementQty = () => setQuantity(q => Math.min(q + 1, 10));
-  const decrementQty = () => setQuantity(q => Math.max(q - 1, 1));
+  const incrementQty = () => setQuantity((q) => Math.min(q + 1, 10));
+  const decrementQty = () => setQuantity((q) => Math.max(q - 1, 1));
 
   return (
     <main className="bg-white min-h-screen">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         <nav className="flex items-center gap-2 text-sm text-gray-500">
-          <Link href="/" className="hover:text-black transition">Home</Link>
+          <Link href="/" className="hover:text-black transition">
+            Home
+          </Link>
           <ChevronRight size={14} />
-          <Link href="/collections/shorts" className="hover:text-black transition">Shop</Link>
+          <Link href="/collections/shorts" className="hover:text-black transition">
+            Shop
+          </Link>
           <ChevronRight size={14} />
           <span className="text-black font-medium truncate">{product.title}</span>
         </nav>
@@ -72,40 +86,33 @@ export default function ProductClient({ product, recommendations = [] }) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-
           {/* Left Side - Product Images */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex gap-3"
-          >
+          <div className="flex gap-3">
             {/* Thumbnails - Side */}
             {productImages.length > 1 && (
               <div className="flex flex-col gap-2 w-20 shrink-0">
                 {productImages.map((img, index) => (
-                  <motion.button
+                  <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`relative aspect-square rounded-lg overflow-hidden transition-all duration-300 ${
+                    className={`relative aspect-square rounded-lg overflow-hidden transition-all duration-150 ${
                       selectedImageIndex === index
                         ? "ring-2 ring-black"
                         : "ring-1 ring-gray-200 hover:ring-gray-400"
                     }`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
-                    <img
+                    <Image
                       src={img}
                       alt={`${product.title} - View ${index + 1}`}
-                      className={`w-full h-full object-cover transition-opacity duration-300 ${
-                        selectedImageIndex === index ? "opacity-100" : "opacity-70 hover:opacity-100"
+                      fill
+                      sizes="80px"
+                      className={`object-cover transition-opacity duration-150 ${
+                        selectedImageIndex === index
+                          ? "opacity-100"
+                          : "opacity-70 hover:opacity-100"
                       }`}
                     />
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             )}
@@ -127,62 +134,44 @@ export default function ProductClient({ product, recommendations = [] }) {
               </div>
 
               {/* Wishlist Button */}
-              <motion.button
+              <button
                 onClick={() => toggleWishlist(product)}
-                className={`absolute top-4 right-4 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
+                className={`absolute top-4 right-4 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-150 ${
                   inWishlist
                     ? "bg-red-50 text-red-500"
                     : "bg-white/90 backdrop-blur-sm text-gray-600 hover:text-red-500"
                 }`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
               >
                 <Heart size={22} className={inWishlist ? "fill-red-500" : ""} />
-              </motion.button>
+              </button>
 
-              {/* Main Image with Animation */}
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={selectedImageIndex}
-                  src={productImages[selectedImageIndex]}
-                  alt={`${product.title} - Main`}
-                  className="w-full h-full object-cover"
-                  initial={{ opacity: 0, scale: 1.05 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </AnimatePresence>
+              {/* Main Image */}
+              <Image
+                key={selectedImageIndex}
+                src={productImages[selectedImageIndex]}
+                alt={`${product.title} - Main`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
             </div>
-          </motion.div>
+          </div>
 
           {/* Right Side - Product Details */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <div className="space-y-6">
             {/* Title */}
             <div>
               <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 leading-tight">
                 {product.title}
               </h1>
-
-          
             </div>
 
             {/* Price */}
             <div className="flex items-baseline gap-3">
-              <motion.span
-                key={currentPrice}
-                className="text-3xl font-bold text-gray-900"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.2 }}
-              >
+              <span className="text-3xl font-bold text-gray-900">
                 ${currentPrice?.toFixed(2)}
-              </motion.span>
+              </span>
               {currentCompareAtPrice && (
                 <span className="text-xl text-gray-400 line-through">
                   ${currentCompareAtPrice.toFixed(2)}
@@ -197,9 +186,7 @@ export default function ProductClient({ product, recommendations = [] }) {
 
             {/* Description */}
             {product.description && (
-              <p className="text-gray-600 leading-relaxed">
-                {product.description}
-              </p>
+              <p className="text-gray-600 leading-relaxed">{product.description}</p>
             )}
 
             {/* Divider */}
@@ -208,10 +195,9 @@ export default function ProductClient({ product, recommendations = [] }) {
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div>
-              
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   {product.sizes.map((size) => {
-                    const variant = product.variants?.find(v => v.size === size);
+                    const variant = variantMap.get(size);
                     const sizeOutOfStock = variant?.availableForSale === false;
 
                     return (
@@ -219,7 +205,7 @@ export default function ProductClient({ product, recommendations = [] }) {
                         key={size}
                         onClick={() => setSelectedSize(size)}
                         disabled={sizeOutOfStock}
-                        className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all duration-200 relative ${
+                        className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-colors duration-100 relative ${
                           sizeOutOfStock
                             ? "border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed line-through"
                             : selectedSize === size
@@ -232,8 +218,6 @@ export default function ProductClient({ product, recommendations = [] }) {
                     );
                   })}
                 </div>
-
-
               </div>
             )}
 
@@ -264,7 +248,7 @@ export default function ProductClient({ product, recommendations = [] }) {
               {/* Wishlist */}
               <button
                 onClick={() => toggleWishlist(product)}
-                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 transition-colors duration-150 ${
                   inWishlist
                     ? "border-red-200 bg-red-50 text-red-500"
                     : "border-gray-200 hover:border-black text-gray-700"
@@ -278,17 +262,16 @@ export default function ProductClient({ product, recommendations = [] }) {
             </div>
 
             {/* Add to Cart Button */}
-            <motion.button
+            <button
               onClick={handleAddToCart}
               disabled={isLoading || !selectedSize || isOutOfStock}
-              className={`w-full py-4 rounded-xl font-bold text-base tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
+              className={`w-full py-4 rounded-xl font-bold text-base tracking-wide transition-colors duration-150 flex items-center justify-center gap-2 ${
                 !selectedSize || isOutOfStock
                   ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : isLoading
                     ? "bg-gray-800 text-white"
                     : "bg-black text-white hover:bg-gray-800 active:scale-[0.98]"
               }`}
-              whileTap={!isLoading && selectedSize && !isOutOfStock ? { scale: 0.98 } : {}}
             >
               {isLoading ? (
                 <>
@@ -305,9 +288,8 @@ export default function ProductClient({ product, recommendations = [] }) {
                   ADD TO CART - ${(currentPrice * quantity).toFixed(2)}
                 </>
               )}
-            </motion.button>
-
-          </motion.div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -324,7 +306,7 @@ export default function ProductClient({ product, recommendations = [] }) {
           <button
             onClick={handleAddToCart}
             disabled={isLoading || !selectedSize || isOutOfStock}
-            className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 ${
               !selectedSize || isOutOfStock
                 ? "bg-gray-200 text-gray-400"
                 : "bg-black text-white active:scale-[0.98]"

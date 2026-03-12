@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/app/context/CartContext";
 import { useWishlist } from "@/app/context/WishlistContext";
@@ -276,11 +277,13 @@ export default function TopBar() {
                       transition={{ delay: index * 0.05 }}
                       whileHover={{ x: 5 }}
                     >
-                      <div className="w-12 h-12 bg-gray-100 rounded flex-shrink-0">
-                        <img
+                      <div className="relative w-12 h-12 bg-gray-100 rounded flex-shrink-0">
+                        <Image
                           src={product.image}
                           alt={product.title}
-                          className="w-full h-full object-contain p-1"
+                          fill
+                          sizes="48px"
+                          className="object-contain p-1"
                         />
                       </div>
                       <div className="flex-1">
@@ -662,11 +665,13 @@ export default function TopBar() {
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <div className="w-24 h-24  rounded flex-shrink-0">
-                          <img
+                        <div className="relative w-24 h-24 rounded shrink-0">
+                          <Image
                             src={item.image}
                             alt={item.title}
-                            className="w-full h-full object-contain p-2"
+                            fill
+                            sizes="96px"
+                            className="object-contain p-2"
                           />
                         </div>
 
@@ -851,11 +856,13 @@ export default function TopBar() {
                         transition={{ delay: index * 0.05 }}
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="w-20 h-20 sm:w-34 sm:h-24 ">
-                          <img
+                        <div className="relative w-20 h-20 sm:w-24 sm:h-24">
+                          <Image
                             src={item.image}
                             alt={item.title}
-                            className="w-full h-full object-contain p-1 sm:p-2"
+                            fill
+                            sizes="(max-width: 640px) 80px, 96px"
+                            className="object-contain p-1 sm:p-2"
                           />
                         </div>
 
