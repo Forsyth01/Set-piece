@@ -6,6 +6,21 @@
  */
 
 /**
+ * Optimize Shopify image URL by adding size parameters
+ * This dramatically reduces image file size and improves load times
+ * @param {string} url - Original Shopify image URL
+ * @param {number} width - Desired width in pixels
+ * @returns {string} - Optimized URL with size parameters
+ */
+export function optimizeImageUrl(url, width = 400) {
+  if (!url || url === '/placeholder.jpg') return url;
+
+  // Shopify CDN supports width parameter
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}width=${width}`;
+}
+
+/**
  * Check if a date is within a certain number of days from now
  * @param {string} dateString - ISO date string
  * @param {number} days - Number of days
@@ -79,9 +94,9 @@ export function transformProduct(shopifyProduct) {
   );
   const compareAtPrice = compareAtPriceAmount > price ? compareAtPriceAmount : null;
 
-  // Extract images
+  // Extract images with optimization for different sizes
   const images = shopifyProduct.images?.edges?.map((e) => ({
-    url: e.node.url,
+    url: optimizeImageUrl(e.node.url, 800),
     altText: e.node.altText,
   })) || [];
 
@@ -90,7 +105,7 @@ export function transformProduct(shopifyProduct) {
     title: shopifyProduct.title,
     handle: shopifyProduct.handle,
     description: shopifyProduct.description || '',
-    image: shopifyProduct.featuredImage?.url || '/placeholder.jpg',
+    image: optimizeImageUrl(shopifyProduct.featuredImage?.url, 400) || '/placeholder.jpg',
     images: images,
     price: price,
     compareAtPrice: compareAtPrice,
@@ -115,7 +130,7 @@ export function transformCollection(shopifyCollection) {
     title: shopifyCollection.title,
     handle: shopifyCollection.handle,
     description: shopifyCollection.description || '',
-    image: shopifyCollection.image?.url || null,
+    image: optimizeImageUrl(shopifyCollection.image?.url, 600) || null,
     products:
       shopifyCollection.products?.edges?.map((e) =>
         transformProduct(e.node)
@@ -154,7 +169,7 @@ export function transformCart(shopifyCart) {
         id: variant.product.id,
         handle: variant.product.handle,
         title: variant.product.title,
-        image: variant.product.featuredImage?.url || '/placeholder.jpg',
+        image: optimizeImageUrl(variant.product.featuredImage?.url, 200) || '/placeholder.jpg',
         price: parseFloat(variant.price?.amount || 0),
         compareAtPrice: variant.compareAtPrice
           ? parseFloat(variant.compareAtPrice.amount)
@@ -187,7 +202,7 @@ export function transformCollectionList(collections) {
     id: edge.node.id,
     title: edge.node.title,
     handle: edge.node.handle,
-    image: edge.node.image?.url || null,
+    image: optimizeImageUrl(edge.node.image?.url, 400) || null,
     productCount: edge.node.products?.edges?.length || 0,
   }));
 }

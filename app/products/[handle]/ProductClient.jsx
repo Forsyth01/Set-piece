@@ -7,6 +7,7 @@ import { useWishlist } from "@/app/context/WishlistContext";
 import RecommendedSection from "@/app/components/RecommendedSection";
 import Link from "next/link";
 import Image from "next/image";
+import { optimizeImageUrl } from "@/app/lib/shopify/transformers";
 
 export default function ProductClient({ product, recommendations = [] }) {
   // Auto-select first size
@@ -49,11 +50,16 @@ export default function ProductClient({ product, recommendations = [] }) {
   // Check if selected variant is out of stock
   const isOutOfStock = selectedVariant?.availableForSale === false;
 
-  // Get all product images
+  // Get all product images with optimized URLs for thumbnails
   const productImages = useMemo(() => {
-    return product.images?.length > 0
+    const baseImages = product.images?.length > 0
       ? product.images.map((img) => img.url)
       : [product.image];
+
+    return baseImages.map(url => ({
+      main: url, // Already 800px from transformer
+      thumbnail: optimizeImageUrl(url.split('?')[0], 100), // 100px for thumbnails
+    }));
   }, [product.images, product.image]);
 
   const handleAddToCart = async () => {
@@ -297,7 +303,7 @@ export default function ProductClient({ product, recommendations = [] }) {
       <RecommendedSection products={recommendations} />
 
       {/* Mobile Sticky Add to Cart */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:hidden z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:hidden z-20">
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <p className="text-xs text-gray-500">{product.title}</p>
