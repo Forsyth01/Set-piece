@@ -174,9 +174,9 @@ export default function TopBar() {
     <>
       <motion.div
         className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center gap-4"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        // initial={{ opacity: 0, y: -20 }}
+        // animate={{ opacity: 1, y: 0 }}
+        // transition={{ duration: 0.5 }}
       >
         {/* Mobile Menu Button */}
         <motion.button
