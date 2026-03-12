@@ -366,7 +366,7 @@ export default function TopBar() {
                     </Link>
                     <Link
                       href="/wishlist"
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      className="flex sm:hidden items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
                       onClick={() => setIsAccountDropdownOpen(false)}
                     >
                       <Heart size={18} />
