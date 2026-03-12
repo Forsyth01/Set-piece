@@ -7,7 +7,6 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/app/context/CartContext";
 import { useWishlist } from "@/app/context/WishlistContext";
-import { useAuth } from "@/app/context/AuthContext";
 import {
   Search,
   Heart,
@@ -22,7 +21,6 @@ import {
   ChevronRight,
   Home,
   Package,
-  LogOut,
 } from "lucide-react";
 import { searchProducts } from "@/app/lib/shopify/api";
 
@@ -39,7 +37,6 @@ export default function TopBar() {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const accountDropdownRef = useRef(null);
   const router = useRouter();
-  const { customer, isAuthenticated, logout } = useAuth();
 
   // Close account dropdown when clicking outside
   useEffect(() => {
@@ -63,12 +60,6 @@ export default function TopBar() {
     { name: "Sweatpants", href: "/collections/sweatpants", icon: Package },
   ];
 
-
-  const handleLogout = async () => {
-    setIsAccountDropdownOpen(false);
-    await logout();
-    router.push("/");
-  };
 
   const handleMobileSearch = (e) => {
     e.preventDefault();
@@ -364,85 +355,24 @@ export default function TopBar() {
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
                 >
-                  {isAuthenticated ? (
-                    <>
-                      {/* Logged in user header */}
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="font-semibold text-gray-900">
-                          {customer?.firstName || "Welcome"}
-                        </p>
-                        <p className="text-sm text-gray-500 truncate">
-                          {customer?.email}
-                        </p>
-                      </div>
-                      <div className="p-2">
-                        <Link
-                          href="/account"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <User size={18} />
-                          <span className="font-medium">My Account</span>
-                        </Link>
-                        <Link
-                          href="/account"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <Package size={18} />
-                          <span className="font-medium">My Orders</span>
-                        </Link>
-                        <Link
-                          href="/wishlist"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <Heart size={18} />
-                          <span className="font-medium">My Wishlist</span>
-                        </Link>
-                      </div>
-                      <div className="border-t border-gray-100 p-2">
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition text-gray-700 hover:text-red-600"
-                        >
-                          <LogOut size={18} />
-                          <span className="font-medium">Sign Out</span>
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="p-2">
-                        <Link
-                          href="/account/login"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <User size={18} />
-                          <span className="font-medium">Sign In</span>
-                        </Link>
-                        <Link
-                          href="/account/register"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <User size={18} />
-                          <span className="font-medium">Create Account</span>
-                        </Link>
-                      </div>
-                      <div className="border-t border-gray-100 p-2">
-                        <Link
-                          href="/wishlist"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <Heart size={18} />
-                          <span className="font-medium">My Wishlist</span>
-                        </Link>
-                      </div>
-                    </>
-                  )}
+                  <div className="p-2">
+                    <Link
+                      href="/account"
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <User size={18} />
+                      <span className="font-medium">My Account</span>
+                    </Link>
+                    <Link
+                      href="/wishlist"
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
+                      onClick={() => setIsAccountDropdownOpen(false)}
+                    >
+                      <Heart size={18} />
+                      <span className="font-medium">My Wishlist</span>
+                    </Link>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1030,40 +960,15 @@ export default function TopBar() {
 
               {/* Footer */}
               <div className="border-t border-gray-100 p-4 space-y-3">
-                {!isAuthenticated ? (
-                  /* Sign In / Create Account buttons when not logged in */
-                  <div className="flex gap-3">
-                    <Link
-                      href="/account/login"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition"
-                    >
-                      <User size={20} />
-                      <span className="text-sm font-medium">Sign In</span>
-                    </Link>
-                    <Link
-                      href="/account/register"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
-                    >
-                      <User size={20} />
-                      <span className="text-sm font-medium">Register</span>
-                    </Link>
-                  </div>
-                ) : (
-                  /* Logout button when logged in */
-                  <motion.button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition"
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <LogOut size={20} />
-                    <span className="text-sm font-medium">Sign Out</span>
-                  </motion.button>
-                )}
+                {/* Account button - links to Shopify accounts */}
+                <Link
+                  href="/account"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition"
+                >
+                  <User size={20} />
+                  <span className="text-sm font-medium">My Account</span>
+                </Link>
 
                 {/* Social/Brand */}
                 <p className="text-center text-xs text-gray-400">
