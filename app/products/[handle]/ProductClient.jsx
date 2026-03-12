@@ -108,7 +108,7 @@ export default function ProductClient({ product, recommendations = [] }) {
                     }`}
                   >
                     <Image
-                      src={img}
+                      src={img.thumbnail}
                       alt={`${product.title} - View ${index + 1}`}
                       fill
                       sizes="80px"
@@ -154,7 +154,7 @@ export default function ProductClient({ product, recommendations = [] }) {
               {/* Main Image */}
               <Image
                 key={selectedImageIndex}
-                src={productImages[selectedImageIndex]}
+                src={productImages[selectedImageIndex].main}
                 alt={`${product.title} - Main`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
