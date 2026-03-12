@@ -22,8 +22,6 @@ import {
   ChevronRight,
   Home,
   Package,
-  Mail,
-  HelpCircle,
   LogOut,
 } from "lucide-react";
 import { searchProducts } from "@/app/lib/shopify/api";
@@ -65,22 +63,6 @@ export default function TopBar() {
     { name: "Sweatpants", href: "/collections/sweatpants", icon: Package },
   ];
 
-  // Dynamic support links based on auth state
-  const supportLinks = isAuthenticated
-    ? [
-        { name: "My Account", href: "/account", icon: User },
-        { name: "My Orders", href: "/account", icon: Package },
-        { name: "My Wishlist", href: "/wishlist", icon: Heart },
-        { name: "Contact Us", href: "/contact", icon: Mail },
-        { name: "FAQ", href: "/faq", icon: HelpCircle },
-      ]
-    : [
-        { name: "Sign In", href: "/account/login", icon: User },
-        { name: "Create Account", href: "/account/register", icon: User },
-        { name: "My Wishlist", href: "/wishlist", icon: Heart },
-        { name: "Contact Us", href: "/contact", icon: Mail },
-        { name: "FAQ", href: "/faq", icon: HelpCircle },
-      ];
 
   const handleLogout = async () => {
     setIsAccountDropdownOpen(false);
@@ -310,10 +292,11 @@ export default function TopBar() {
 
         {/* Icons */}
         <div className="flex items-center gap-4 ml-auto">
+          {/* Wishlist - Desktop only */}
           <motion.button
             data-wishlist-button
             onClick={() => setIsWishlistOpen(true)}
-            className="relative cursor-pointer hover:text-gray-600 transition"
+            className="relative cursor-pointer hover:text-gray-600 transition hidden sm:block"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -330,10 +313,11 @@ export default function TopBar() {
             </AnimatePresence>
           </motion.button>
 
+          {/* Cart */}
           <motion.button
             data-cart-button
             onClick={() => setIsCartOpen(true)}
-            className="relative cursor-pointer hover:text-gray-600 transition mr-2 sm:mr-0"
+            className="relative cursor-pointer hover:text-gray-600 transition"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -350,7 +334,15 @@ export default function TopBar() {
             </AnimatePresence>
           </motion.button>
 
-          {/* Account Button with Dropdown */}
+          {/* Account Button - Mobile (no dropdown) */}
+          <Link
+            href="/account"
+            className="cursor-pointer hover:text-gray-600 transition sm:hidden"
+          >
+            <User size={22} />
+          </Link>
+
+          {/* Account Button with Dropdown - Desktop */}
           <div className="relative hidden sm:block" ref={accountDropdownRef}>
             <motion.button
               onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
@@ -447,14 +439,6 @@ export default function TopBar() {
                         >
                           <Heart size={18} />
                           <span className="font-medium">My Wishlist</span>
-                        </Link>
-                        <Link
-                          href="/contact"
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition text-gray-700 hover:text-black"
-                          onClick={() => setIsAccountDropdownOpen(false)}
-                        >
-                          <HelpCircle size={18} />
-                          <span className="font-medium">Help & Support</span>
                         </Link>
                       </div>
                     </>
@@ -1042,92 +1026,44 @@ export default function TopBar() {
                   ))}
                 </nav>
 
-                <div className="px-4 mt-6 mb-2">
-                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    Support
-                  </span>
-                </div>
-                <nav className="space-y-1 px-2">
-                  {supportLinks.map((link, index) => (
-                    <motion.div
-                      key={link.href + link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: (navLinks.length + index) * 0.05 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-gray-50 transition group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <link.icon size={20} className="text-gray-400 group-hover:text-black transition" />
-                          <span className="font-medium text-gray-700 group-hover:text-black transition">
-                            {link.name}
-                          </span>
-                        </div>
-                        <ChevronRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
-                      </Link>
-                    </motion.div>
-                  ))}
-                  {isAuthenticated && (
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: (navLinks.length + supportLinks.length) * 0.05 }}
-                    >
-                      <button
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          handleLogout();
-                        }}
-                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl hover:bg-red-50 transition group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <LogOut size={20} className="text-gray-400 group-hover:text-red-600 transition" />
-                          <span className="font-medium text-gray-700 group-hover:text-red-600 transition">
-                            Sign Out
-                          </span>
-                        </div>
-                      </button>
-                    </motion.div>
-                  )}
-                </nav>
               </div>
 
               {/* Footer */}
               <div className="border-t border-gray-100 p-4 space-y-3">
-                {/* Quick Actions */}
-                <div className="flex gap-3">
+                {!isAuthenticated ? (
+                  /* Sign In / Create Account buttons when not logged in */
+                  <div className="flex gap-3">
+                    <Link
+                      href="/account/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex-1 flex items-center justify-center gap-2 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition"
+                    >
+                      <User size={20} />
+                      <span className="text-sm font-medium">Sign In</span>
+                    </Link>
+                    <Link
+                      href="/account/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
+                    >
+                      <User size={20} />
+                      <span className="text-sm font-medium">Register</span>
+                    </Link>
+                  </div>
+                ) : (
+                  /* Logout button when logged in */
                   <motion.button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      setIsWishlistOpen(true);
+                      handleLogout();
                     }}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition"
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Heart size={20} />
-                    <span className="text-sm font-medium">Wishlist</span>
-                    {wishlistItemCount > 0 && (
-                      <span className="bg-red-500 w-2 h-2 rounded-full" />
-                    )}
+                    <LogOut size={20} />
+                    <span className="text-sm font-medium">Sign Out</span>
                   </motion.button>
-                  <motion.button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setIsCartOpen(true);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition"
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <ShoppingBag size={20} />
-                    <span className="text-sm font-medium">Cart</span>
-                    {cartItemCount > 0 && (
-                      <span className="bg-white w-2 h-2 rounded-full" />
-                    )}
-                  </motion.button>
-                </div>
+                )}
 
                 {/* Social/Brand */}
                 <p className="text-center text-xs text-gray-400">
