@@ -188,6 +188,31 @@ const CUSTOMER_RESET_MUTATION = `
 `;
 
 /**
+ * Activate customer account with token
+ */
+const CUSTOMER_ACTIVATE_MUTATION = `
+  mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
+    customerActivate(id: $id, input: $input) {
+      customer {
+        id
+        email
+        firstName
+        lastName
+      }
+      customerAccessToken {
+        accessToken
+        expiresAt
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
+/**
  * Update customer info
  */
 const CUSTOMER_UPDATE_MUTATION = `
@@ -430,6 +455,50 @@ export async function recoverPassword(email) {
   return {
     success: true,
   };
+}
+
+/**
+ * Activate customer account with activation token
+ * @param {string} customerId - Customer ID (gid://shopify/Customer/...)
+ * @param {string} activationToken - Activation token from email
+ * @param {string} password - New password for the account
+ * @returns {Promise<Object>} - Customer and access token or errors
+ */
+export async function activateCustomer(customerId, activationToken, password) {
+  try {
+    const data = await shopifyFetch({
+      query: CUSTOMER_ACTIVATE_MUTATION,
+      variables: {
+        id: customerId,
+        input: {
+          activationToken,
+          password,
+        },
+      },
+    });
+
+    const { customer, customerAccessToken, customerUserErrors } = data.customerActivate;
+
+    if (customerUserErrors?.length > 0) {
+      return {
+        success: false,
+        errors: customerUserErrors.map(e => e.message),
+        errorCode: customerUserErrors[0]?.code,
+      };
+    }
+
+    return {
+      success: true,
+      customer,
+      accessToken: customerAccessToken.accessToken,
+      expiresAt: customerAccessToken.expiresAt,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      errors: [error.message || 'Failed to activate account'],
+    };
+  }
 }
 
 /**
