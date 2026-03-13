@@ -49,6 +49,19 @@ export default function TopBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Lock body scroll when any sidebar is open
+  useEffect(() => {
+    if (isCartOpen || isWishlistOpen || isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isCartOpen, isWishlistOpen, isMobileMenuOpen]);
+
   // Navigation links for mobile menu
   const navLinks = [
     { name: "Home", href: "/", icon: Home },
